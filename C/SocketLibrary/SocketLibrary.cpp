@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -105,8 +106,7 @@ int Accept(int sEcoute,char *ipClient){
 
         printf("Client connecte --> Adresse IP: %s -- Port: %s\n",host,port);
         strcpy(ipClient, &host[0]);
-        pause();
-        return 1;
+        return sService;
     }
 
     return 0;
@@ -149,14 +149,55 @@ int ClientSocket(char* ipServeur,int portServeur){
         freeaddrinfo(results);
         return -1;
     }
-    printf("connect() reussi !");
-    pause();
+    printf("connect() reussi !\n");
     
-    return 0;
-    
-
+    return sClient;
 }
 
-int Send(int sSocket,char* data,int taille){return 0;}
+int Send(int sSocket,char* data,int taille){
 
-int Receive(int sSocket,char* data){return 0;}
+    int nb;
+    char CMessageTemp[200];
+
+    strcpy(&CMessageTemp[0], data);
+    strcat(&CMessageTemp[0], "#");
+
+    if ((nb = write(sSocket,CMessageTemp,(taille + 1))) == -1)
+    {
+        perror("Erreur de write()");
+        kill(getpid(), SIGINT);
+    }
+        printf("nbEcrits = %d\n",nb);
+        
+    return 0;
+}
+
+int Receive(int sSocket,char* data){
+    
+    int nb;
+    char CMessageTemp[1], CMessageServeur[100];
+
+    strcpy(CMessageServeur, "[SERVEUR] ");
+    if ((nb = read(sSocket,CMessageTemp,1)) == -1)
+    {
+        perror("Erreur de read()");
+        kill(getpid(), SIGINT);
+        return -1;
+    }
+    while(strcmp(&CMessageTemp[0], "#") == 0)
+    {   
+        strcat(data, &CMessageTemp[0]);
+        if ((nb = read(sSocket,CMessageTemp,1)) == -1)
+            {
+                perror("Erreur de read()");
+                kill(getpid(), SIGINT);
+                return -1;
+            }
+    }
+    strcat(&CMessageServeur[0], data);
+    strcpy(data, &CMessageServeur[0]);
+
+    printf("--%s--\n",data);
+
+    return 1;
+}
