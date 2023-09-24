@@ -27,12 +27,13 @@ int ServerSocket(int port){
         // Pour la recherche
         struct addrinfo hints;
         struct addrinfo *results;
+
         // Pour l'affichage des resultats
         char host[NI_MAXHOST];
         char port[NI_MAXSERV];
         struct addrinfo* info;
 
-        memset(&hints,0,sizeof(struct addrinfo)); // initialisation à 0
+        memset(&hints,0,sizeof(struct addrinfo));
         hints.ai_family = AF_INET;
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_flags = AI_PASSIVE | AI_NUMERICSERV;
@@ -106,6 +107,8 @@ int Accept(int sEcoute,char *ipClient){
 
         printf("Client connecte --> Adresse IP: %s -- Port: %s\n",host,port);
         strcpy(ipClient, &host[0]);
+
+        //renvoie la socket de service
         return sService;
     }
 
@@ -151,6 +154,7 @@ int ClientSocket(char* ipServeur,int portServeur){
     }
     printf("connect() reussi !\n");
     
+    //renvoie la socket de service du client qui va lui permettre de communiquer avec le serveur
     return sClient;
 }
 
@@ -161,43 +165,47 @@ int Send(int sSocket,char* data,int taille){
 
     strcpy(&CMessageTemp[0], data);
     strcat(&CMessageTemp[0], "#");
+    strcat(&CMessageTemp[0], "#");
 
-    if ((nb = write(sSocket,CMessageTemp,(taille + 1))) == -1)
+    if ((nb = write(sSocket,CMessageTemp,(taille + 2))) == -1)
     {
         perror("Erreur de write()");
         kill(getpid(), SIGINT);
     }
         printf("nbEcrits = %d\n",nb);
+        printf("---> %s <---", &CMessageTemp[0]);
         
-    return 0;
+    return nb - 2 ; // -2 car on enlève les caractere de fin de chaine.
 }
 
-int Receive(int sSocket,char* data){
-    
-    int nb;
-    char CMessageTemp[1], CMessageServeur[100];
+int Receive(int sSocket, char* data) {
+    int nb, len;
+    bool BCheckEndChain = false;
 
-    strcpy(CMessageServeur, "[SERVEUR] ");
-    if ((nb = read(sSocket,CMessageTemp,1)) == -1)
-    {
-        perror("Erreur de read()");
-        kill(getpid(), SIGINT);
-        return -1;
-    }
-    while(strcmp(&CMessageTemp[0], "#") == 0)
-    {   
-        strcat(data, &CMessageTemp[0]);
-        if ((nb = read(sSocket,CMessageTemp,1)) == -1)
-            {
-                perror("Erreur de read()");
-                kill(getpid(), SIGINT);
-                return -1;
+    data[0] = '\0';
+
+    while (!BCheckEndChain) {
+        char CMessageTemp;
+        if (read(sSocket, &CMessageTemp, 1) == -1) {
+            perror("Erreur de read()");
+            kill(getpid(), SIGINT);
+            return -1;
+        }
+
+        
+        strncat(data, &CMessageTemp, 1);
+        len = strlen(data);
+        if (data[len - 1] == '#' && data[len - 2] == '#') {
+            printf("Fin de la lecture\n");
+            if (len >= 2) {
+                data[len - 2] = '\0';
             }
+            BCheckEndChain = true;
+        }
+        nb++;
     }
-    strcat(&CMessageServeur[0], data);
-    strcpy(data, &CMessageServeur[0]);
 
-    printf("--%s--\n",data);
+    printf("--%s--\n", data);
 
-    return 1;
+    return nb;
 }
