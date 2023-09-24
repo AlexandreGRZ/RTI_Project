@@ -8,3 +8,6 @@ SocketLibrary.o:	SocketLibrary.cpp SocketLibrary.h
 
 Client:	Client.cpp SocketLibrary.o
 		g++ SocketLibrary.cpp Client.cpp -o Client
+
+clean:
+	rm -rf *.o Client testsocket test
