@@ -1,7 +1,6 @@
 #ifndef TEST_CPP
 #define TEST_CPP
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -16,7 +15,7 @@ int main()
     struct sigaction A;
     A.sa_handler = handlerSIGINT;
     A.sa_flags = 0;
-    sigaction(SIGINT,&A,NULL);
+    sigaction(SIGINT, &A, NULL);
 
     IServerSocket = ServerSocket(50000);
     char CipClient[20];
@@ -32,20 +31,19 @@ int main()
 
     printf("Message recu ! \n");
 
-    Send(IServiceSocket,&CMessage[0], strlen(&CMessage[0]));
+    Send(IServiceSocket, &CMessage[0], strlen(&CMessage[0]));
 
     printf("Message Envoyer ! \n");
 
     pause();
 }
 
-
 void handlerSIGINT(int sig)
 {
-  
-  close(IServerSocket);
-  close(IServiceSocket);
 
-  exit(1);
+    close(IServerSocket);
+    close(IServiceSocket);
+
+    exit(1);
 }
 #endif
