@@ -26,7 +26,7 @@ int main(int argc,char* argv[])
 
     char Cmessage[100];
 
-    strcpy(&Cmessage[0],"Bonjour Je suis Alexandre");
+    strcpy(&Cmessage[0],"LOGIN#wagner#abc123");
     
     printf("Message Envoyer ! \n");
 
@@ -37,6 +37,59 @@ int main(int argc,char* argv[])
     Receive(IClientSocket, &Cmessage[0]);
 
     printf("Message recu ! \n");
+
+    sleep(1);
+
+    strcpy(&Cmessage[0],"ACHAT");
+    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+    Receive(IClientSocket, &Cmessage[0]);
+
+    sleep(1);
+    
+    strcpy(&Cmessage[0],"CADDIE");
+    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+    Receive(IClientSocket, &Cmessage[0]);
+
+    sleep(1);
+    
+    strcpy(&Cmessage[0],"CONSULT");
+    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+    Receive(IClientSocket, &Cmessage[0]);
+
+    sleep(1);
+    
+    strcpy(&Cmessage[0],"CANCEL");
+    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+    Receive(IClientSocket, &Cmessage[0]);
+
+    sleep(1);
+    
+    strcpy(&Cmessage[0],"CANCELALL");
+    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+    Receive(IClientSocket, &Cmessage[0]);
+
+    sleep(1);
+    
+    strcpy(&Cmessage[0],"CONFIRMER");
+    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+    Receive(IClientSocket, &Cmessage[0]);
+    
+
+    strcpy(&Cmessage[0],"LOGOUT");
+
+    printf("Message Envoyer ! \n");
+
+    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+
+    printf("En attente de reponse ... \n");
+
+    Receive(IClientSocket, &Cmessage[0]);
+
+    printf("Message recu ! \n");
+
+    pause();
+
+
 }
 
 void handlerSIGINT(int sig)
