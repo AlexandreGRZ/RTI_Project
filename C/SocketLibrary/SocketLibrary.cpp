@@ -164,7 +164,7 @@ int Send(int sSocket,char* data,int taille){
     char CMessageTemp[200];
 
     strcpy(&CMessageTemp[0], data);
-    strcat(&CMessageTemp[0], "#");
+    strcat(&CMessageTemp[0], "!");
     strcat(&CMessageTemp[0], "#");
 
     if ((nb = write(sSocket,CMessageTemp,(taille + 2))) == -1)
@@ -195,7 +195,7 @@ int Receive(int sSocket, char* data) {
         
         strncat(data, &CMessageTemp, 1);
         len = strlen(data);
-        if (data[len - 1] == '#' && data[len - 2] == '#') {
+        if (data[len - 1] == '#' && data[len - 2] == '!') {
             printf("Fin de la lecture\n");
             if (len >= 2) {
                 data[len - 2] = '\0';
