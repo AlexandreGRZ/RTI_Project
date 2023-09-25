@@ -1,5 +1,8 @@
-.o
+*.o
 Client
+Server
 test
 testsocket
 .vscode
+CreationBD
+AjoutTableClientsBD
