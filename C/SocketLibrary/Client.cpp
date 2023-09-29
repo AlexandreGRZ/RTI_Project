@@ -24,9 +24,9 @@ int main(int argc,char* argv[])
     int num = atoi(argv[2]);
     IClientSocket = ClientSocket(argv[1],num);
 
-    char Cmessage[100];
+    char Cmessage[1000];
 
-    strcpy(&Cmessage[0],"LOGIN#wagner#abc123");
+    strcpy(&Cmessage[0],"ACHAT#4#1");
     
     printf("Message Envoyer ! \n");
 
@@ -38,45 +38,38 @@ int main(int argc,char* argv[])
 
     printf("Message recu ! \n");
 
-    sleep(1);
+    sleep(2);
 
-    strcpy(&Cmessage[0],"ACHAT");
+    strcpy(&Cmessage[0],"ACHAT#8#2");
+    
+    printf("Message Envoyer ! \n");
+
     Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+
+    printf("En attente de reponse ... \n");
+
     Receive(IClientSocket, &Cmessage[0]);
 
-    sleep(1);
-    
+    printf("Message recu ! \n");
+
+    sleep(2);
+
     strcpy(&Cmessage[0],"CADDIE");
+    
+    printf("Message Envoyer ! \n");
+
     Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+
+    printf("En attente de reponse ... \n");
+
     Receive(IClientSocket, &Cmessage[0]);
 
-    sleep(1);
-    
-    strcpy(&Cmessage[0],"CONSULT");
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
-    Receive(IClientSocket, &Cmessage[0]);
+    printf("Message recu ! \n");
 
-    sleep(1);
-    
-    strcpy(&Cmessage[0],"CANCEL");
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
-    Receive(IClientSocket, &Cmessage[0]);
-
-    sleep(1);
-    
-    strcpy(&Cmessage[0],"CANCELALL");
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
-    Receive(IClientSocket, &Cmessage[0]);
-
-    sleep(1);
-    
-    strcpy(&Cmessage[0],"CONFIRMER");
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
-    Receive(IClientSocket, &Cmessage[0]);
-    
+    sleep(2);
 
     strcpy(&Cmessage[0],"LOGOUT");
-
+    
     printf("Message Envoyer ! \n");
 
     Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
@@ -88,7 +81,6 @@ int main(int argc,char* argv[])
     printf("Message recu ! \n");
 
     pause();
-
 
 }
 

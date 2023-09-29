@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <mysql.h>
+#include "AccesBD.h"
 
 
 int clients[NB_MAX_CLIENTS];
@@ -18,35 +20,69 @@ void retire(int socket);
 pthread_mutex_t mutexClients = PTHREAD_MUTEX_INITIALIZER;
 
 
-bool SMOP(char* requete, char* reponse,int socket)
+bool SMOP(MYSQL* MysqlBase, char* requete, char* reponse,int socket, bool * CheckLogin)
 {
     char *ptr = strtok(requete,"#");
 
     if (strcmp(ptr,"LOGIN") == 0) 
     {   
-        
-        char *Login = strtok(NULL,"#");
-        char *Password = strtok(NULL,"#");
+        printf("%d\n\n\n", *CheckLogin);
+        if(!*CheckLogin){
+            char *Login = strtok(NULL,"#");
+            char *Password = strtok(NULL,"#");
 
-        if(SMOP_Login(Login, Password))
-        {
-            sprintf(reponse, "LOGIN#%s#%s", Login, Password);
+            if(SMOP_Login(MysqlBase, Login, Password))
+            {
+                sprintf(reponse, "LOGIN#%s#%s#OK", Login, Password);
+                *CheckLogin = true;
+                printf("%d\n\n\n", *CheckLogin);
+                return true;
+            }
+            else
+            {
+                sprintf(reponse, "LOGIN#ERR");
+                return true;
+            }
         }
-        else
-        {
-            sprintf(reponse, "LOGIN#ERR");
+        else{
+            sprintf(reponse, "LOGIN#ALREADY");
+            return true;
         }
+        
 
     }
 
     if (strcmp(ptr,"CONSULT") == 0) 
     {
-        sprintf(reponse, "CONSULT#OK");
+        char *CidAliment = strtok(NULL,"#");
+        char CReponse[150];
+        
+        
+        if(SMOP_Consult(MysqlBase, atoi(CidAliment), &CReponse[0])){
+            strcpy(reponse, "CONSULT#OK#");
+            strcat(reponse, CReponse);
+            return true;
+        }
+        else
+        {
+            strcpy(reponse, "CONSULT#ERR");
+            return false;
+        }
     }
 
     if (strcmp(ptr,"ACHAT") == 0) 
-    {
-        sprintf(reponse, "ACHAT#OK");
+    {   
+        char *CidAliment = strtok(NULL,"#");
+        char *CQuantite = strtok(NULL,"#");
+        
+        if(SMOP_Achat(MysqlBase, atoi(CidAliment), atoi(CQuantite), reponse)){
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        return false;
     }
 
     if (strcmp(ptr,"CADDIE") == 0) 
@@ -73,6 +109,7 @@ bool SMOP(char* requete, char* reponse,int socket)
     {
         printf("\t[THREAD %p] LOGOUT\n",pthread_self());
         retire(socket);
+        *CheckLogin = false;
         sprintf(reponse,"LOGOUT#ok");
         return false;
 
@@ -82,10 +119,19 @@ bool SMOP(char* requete, char* reponse,int socket)
 }
 
 
-bool SMOP_Login(const char* user,const char* password){
-    if (strcmp(user,"wagner")==0 && strcmp(password,"abc123")==0) return true;
-    if (strcmp(user,"charlet")==0 && strcmp(password,"xyz456")==0) return true;
- return false;
+bool SMOP_Login(MYSQL* MysqlBase, const char* user,const char* password){
+    
+    return UserConnexion(MysqlBase, user, password);
+}
+
+bool SMOP_Consult(MYSQL * MysqlBase, int idAliment, char * pCReponse)
+{
+    return UserConsult(MysqlBase, idAliment, pCReponse);
+}
+
+bool SMOP_Achat(MYSQL * MysqlBase, int IdAliment, int IQuantite, char * pCreponse)
+{
+    return UserAchat(MysqlBase, IdAliment, IQuantite, pCreponse);
 }
 
 int estPresent(int socket)
