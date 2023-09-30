@@ -8,11 +8,13 @@
 #include "AccesBD.h"
 #include "SMOP.h"
 
+
 void HandlerSIGINT(int s);
 void TraitementConnexion(int sService);
 void* FctThreadClient(void* p);
 
 int sEcoute;
+MYSQL* MysqlBase = ConnexionBD();
 
 #define NB_THREADS_POOL 2
 #define TAILLE_FILE_ATTENTE 20
@@ -20,6 +22,7 @@ int sEcoute;
 int socketsAcceptees[TAILLE_FILE_ATTENTE];
 int indiceEcriture=0, indiceLecture=0;
 pthread_mutex_t mutexSocketsAcceptees;
+pthread_mutex_t mutexBDAcces;
 pthread_cond_t condSocketsAcceptees;
 
 #define MAX_CLIENT 10
@@ -27,6 +30,7 @@ pthread_cond_t condSocketsAcceptees;
 int main(int argc,char* argv[])
 {
    pthread_mutex_init(&mutexSocketsAcceptees,NULL);
+   pthread_mutex_init(&mutexBDAcces,NULL);
    pthread_cond_init(&condSocketsAcceptees,NULL);
 
    for (int i=0 ; i < TAILLE_FILE_ATTENTE ; i++)
@@ -45,6 +49,7 @@ int main(int argc,char* argv[])
       perror("Erreur de sigaction");
       exit(1);
    }
+   
 
    if ((sEcoute = ServerSocket(atoi(argv[1]))) == -1)
    {
@@ -128,43 +133,56 @@ void* FctThreadClient(void* p)
 
 void TraitementConnexion(int sService)
 {
-   char requete[200], reponse[200];
-   int nbLus, nbEcrits;
-   bool onContinue = true;
+   char  requete[1000], reponse[1000], CTempon[200], CaddieReponse[1000];
+   int   nbLus, nbEcrits, nbarticle;
+   bool  onContinue = true;
+   bool CheckLogin = false;
+   ARTICLEINPANNIER Caddie[10];
+
+   for (int i = 0; i < 10; i++)
+   {
+      Caddie[i].id = -1;
+   }
+
    while (onContinue)
    {
+      printf("%d\n\n\n", CheckLogin);
       printf("\t[THREAD %p] Attente requete...\n",pthread_self());
      
       if ((nbLus = Receive(sService,requete)) < 0)
       {
-      perror("Erreur de Receive");
-      close(sService);
-      HandlerSIGINT(0);
-   }
+         perror("Erreur de Receive");
+         close(sService);
+         HandlerSIGINT(0);
+      }
 
-   if (nbLus == 0)
-   {
-      printf("\t[THREAD %p] Fin de connexion du client.\n",pthread_self());
-      close(sService);
-      return;
-   }
+      if (nbLus == 0)
+      {
+         printf("\t[THREAD %p] Fin de connexion du client.\n",pthread_self());
+         close(sService);
+         return;
+      }
 
-   requete[nbLus] = 0;
+      requete[nbLus] = 0;
    
-   printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
-   
-   onContinue = SMOP(requete,reponse,sService);
-   
-   if ((nbEcrits = Send(sService,reponse,strlen(reponse))) < 0)
-   {
-      perror("Erreur de Send");
-      close(sService);
-      HandlerSIGINT(0);
-   }
+      printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
+      
+      pthread_mutex_lock(&mutexBDAcces);
+      onContinue = SMOP(MysqlBase,requete,reponse,sService, &CheckLogin, &Caddie[0]);
+      pthread_mutex_unlock(&mutexBDAcces);
+
+      if ((nbEcrits = Send(sService,reponse,strlen(reponse))) < 0)
+      {
+         perror("Erreur de Send");
+         close(sService);
+         HandlerSIGINT(0);
+      }
       printf("\t[THREAD %p] Reponse envoyee = %s\n",pthread_self(),reponse);
+      
       if (!onContinue) 
          printf("\t[THREAD %p] Fin de connexion de la socket %d\n",pthread_self(),sService);
    }
+
 }
 
 void HandlerSIGINT(int s)
@@ -180,7 +198,5 @@ void HandlerSIGINT(int s)
    SMOP_Close();
    exit(0);
 }
-
-
 
 
