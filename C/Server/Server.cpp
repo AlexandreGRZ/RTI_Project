@@ -8,14 +8,6 @@
 #include "AccesBD.h"
 #include "SMOP.h"
 
-typedef struct
-{
-  int   id;
-  char  intitule[20];
-  float prix;
-  int   quantite;  
-
-} ARTICLEINPANNIER;
 
 void HandlerSIGINT(int s);
 void TraitementConnexion(int sService);
@@ -141,12 +133,16 @@ void* FctThreadClient(void* p)
 
 void TraitementConnexion(int sService)
 {
-   char  requete[200], reponse[200], CTempon[200], CaddieReponse[1000];
+   char  requete[1000], reponse[1000], CTempon[200], CaddieReponse[1000];
    int   nbLus, nbEcrits, nbarticle;
    bool  onContinue = true;
    bool CheckLogin = false;
    ARTICLEINPANNIER Caddie[10];
-   nbarticle = 0;
+
+   for (int i = 0; i < 10; i++)
+   {
+      Caddie[i].id = -1;
+   }
 
    while (onContinue)
    {
@@ -170,54 +166,16 @@ void TraitementConnexion(int sService)
       requete[nbLus] = 0;
    
       printf("\t[THREAD %p] Requete recue = %s\n",pthread_self(),requete);
-      if(strstr(requete, "CADDIE") != NULL)
+      
+      pthread_mutex_lock(&mutexBDAcces);
+      onContinue = SMOP(MysqlBase,requete,reponse,sService, &CheckLogin, &Caddie[0]);
+      pthread_mutex_unlock(&mutexBDAcces);
+
+      if ((nbEcrits = Send(sService,reponse,strlen(reponse))) < 0)
       {
-         strcpy(CaddieReponse, "CADDIE");
-         for (int i = 0; i < nbarticle; i++)
-         {  
-            strcat(CaddieReponse, "#");
-            sprintf(CTempon, "%i#%s#%f#%d", Caddie[i].id, Caddie[i].intitule, Caddie[i].prix, Caddie[i].quantite);
-            strcat(CaddieReponse, CTempon);
-         }
-
-         if ((nbEcrits = Send(sService,CaddieReponse,strlen(CaddieReponse))) < 0)
-         {
-            perror("Erreur de Send");
-            close(sService);
-            HandlerSIGINT(0);
-         }
-
-      }  
-      else 
-      {
-         pthread_mutex_lock(&mutexBDAcces);
-         onContinue = SMOP(MysqlBase,requete,reponse,sService, &CheckLogin);
-         pthread_mutex_unlock(&mutexBDAcces);
-
-
-         if(strstr(reponse, "ACHAT#") != NULL)
-         {
-            strcpy(CTempon, reponse);
-            char *ptr = strtok(CTempon,"#");
-
-            Caddie[nbarticle].id = atoi(strtok(NULL, "#"));
-
-            char * Cintitule; 
-            Cintitule = strtok(NULL, "#");
-            strcpy(Caddie[nbarticle].intitule, Cintitule);
-             
-            Caddie[nbarticle].prix = atof(strtok(NULL, "#"));
-            Caddie[nbarticle].quantite = atoi(strtok(NULL, "#"));
-
-            nbarticle++;
-         }
-
-         if ((nbEcrits = Send(sService,reponse,strlen(reponse))) < 0)
-         {
-            perror("Erreur de Send");
-            close(sService);
-            HandlerSIGINT(0);
-         }
+         perror("Erreur de Send");
+         close(sService);
+         HandlerSIGINT(0);
       }
       printf("\t[THREAD %p] Reponse envoyee = %s\n",pthread_self(),reponse);
       
@@ -240,7 +198,5 @@ void HandlerSIGINT(int s)
    SMOP_Close();
    exit(0);
 }
-
-
 
 

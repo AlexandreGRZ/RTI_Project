@@ -153,8 +153,44 @@ bool    UserAchat(MYSQL *   ConnexionBD, int idAliment, int IQuantite, char * pC
             return false;
         }
     }
+    return false;
+}
 
+bool    UserCancel(MYSQL *   ConnexionBD, int idAliment, int IQuantite)
+{
+    char query[255];
+    MYSQL_RES *res;
+    MYSQL_ROW row;
 
+    
+    snprintf(query, sizeof(query), "SELECT stock FROM articles WHERE id = '%d'", idAliment);
+ 
+    if (mysql_query(ConnexionBD, query)) {
+        printf("Erreur lors de l'execution de la requete : %s\n", mysql_error(ConnexionBD));
+        return false;
+    }
 
+    res = mysql_store_result(ConnexionBD);
+
+    if (res) {
+        
+        if ((row = mysql_fetch_row(res))) {
+            printf("Stock : %d\n", atoi(row[0]));
+            printf("IQantite : %d\n", IQuantite);
+            int INewStock = atoi(row[0]);
+            INewStock += IQuantite;
+            printf("Stock : %d\n", INewStock);
+
+            snprintf(query, sizeof(query), "UPDATE articles SET stock = %d WHERE id = %d",INewStock ,idAliment);
+
+            if (mysql_query(ConnexionBD, query)) {
+                printf("Erreur lors de l'execution de la requete : %s\n", mysql_error(ConnexionBD));
+                return false;
+            }
+            
+            mysql_free_result(res);
+            return true;
+        }
+    }
     return false;
 }
