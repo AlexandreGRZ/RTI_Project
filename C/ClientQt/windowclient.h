@@ -4,7 +4,10 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class WindowClient; }
+namespace Ui
+{
+    class WindowClient;
+}
 QT_END_NAMESPACE
 
 class WindowClient : public QMainWindow
@@ -49,11 +52,13 @@ private slots:
     void on_pushButtonSupprimer_clicked();
     void on_pushButtonViderPanier_clicked();
     void on_pushButtonPayer_clicked();
+    void createClientSocket();
 
 private:
     Ui::WindowClient *ui;
 
     char motDePasse[20];
     char nom[20];
+    int IClientSocket;
 };
 #endif // WINDOWCLIENT_H
