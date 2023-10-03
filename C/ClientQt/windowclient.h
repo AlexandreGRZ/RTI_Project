@@ -2,6 +2,7 @@
 #define WINDOWCLIENT_H
 
 #include <QMainWindow>
+#include <mutex>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -53,6 +54,7 @@ private slots:
     void on_pushButtonViderPanier_clicked();
     void on_pushButtonPayer_clicked();
     void createClientSocket();
+    void setNewArticle(char *requete);
 
 private:
     Ui::WindowClient *ui;
@@ -60,5 +62,7 @@ private:
     char motDePasse[20];
     char nom[20];
     int IClientSocket;
+    int idArticle;
+    std::mutex consult_mtx;
 };
 #endif // WINDOWCLIENT_H

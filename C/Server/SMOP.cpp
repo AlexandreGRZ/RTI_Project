@@ -64,7 +64,7 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
         else
         {
             strcpy(reponse, "CONSULT#ERR");
-            return false;
+            return true;
         }
     }
 

@@ -34,8 +34,7 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     setPublicite("!!! Bienvenue sur le Maraicher en ligne !!!");
 
     // Exemples à supprimer
-    setArticle("pommes", 5.53, 18, "pommes.jpg");
-    ajouteArticleTablePanier("cerises", 8.96, 2);
+    // ajouteArticleTablePanier("cerises", 8.96, 2);
 
     createClientSocket();
 }
@@ -304,7 +303,24 @@ void WindowClient::on_pushButtonLogin_clicked()
     printf("En attente de reponse ... \n");
     Receive(IClientSocket, requete);
     if (strstr(requete, "#OK") != NULL)
+    {
         loginOK();
+        consult_mtx.lock();
+        char requete[1024];
+        idArticle = 1;
+
+        sprintf(requete, "CONSULT#%d", idArticle);
+        Send(IClientSocket, requete, strlen(requete));
+
+        printf("En attente de reponse ... \n");
+        Receive(IClientSocket, requete);
+
+        if (strstr(requete, "#ERR") != NULL)
+            idArticle++;
+        else
+            setNewArticle(requete);
+        consult_mtx.unlock();
+    }
 
     // printf("%s taille:%ld\n", username, strlen(username));
 }
@@ -326,11 +342,43 @@ void WindowClient::on_pushButtonLogout_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSuivant_clicked()
 {
+    consult_mtx.lock();
+    char requete[1024];
+    int id_temp = idArticle + 1;
+
+    sprintf(requete, "CONSULT#%d", id_temp);
+    Send(IClientSocket, requete, strlen(requete));
+
+    printf("En attente de reponse ... \n");
+    Receive(IClientSocket, requete);
+
+    if (strstr(requete, "#OK") != NULL)
+    {
+        idArticle = id_temp;
+        setNewArticle(requete);
+    }
+    consult_mtx.unlock();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
+    consult_mtx.lock();
+    char requete[1024];
+    int id_temp = idArticle - 1;
+
+    sprintf(requete, "CONSULT#%d", id_temp);
+    Send(IClientSocket, requete, strlen(requete));
+
+    printf("En attente de reponse ... \n");
+    Receive(IClientSocket, requete);
+
+    if (strstr(requete, "#OK") != NULL)
+    {
+        idArticle = id_temp;
+        setNewArticle(requete);
+    }
+    consult_mtx.unlock();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -358,4 +406,25 @@ void WindowClient::createClientSocket()
     char ip[32];
     sprintf(ip, "127.0.0.1");
     IClientSocket = ClientSocket(ip, 50000);
+}
+
+void WindowClient::setNewArticle(char *requete)
+{
+    char nom[64], image[64];
+    char *temp;
+    float prix;
+    int stock;
+
+    temp = strtok(requete, "#"); // CONSULT
+    temp = strtok(NULL, "#");    // OK
+    temp = strtok(NULL, "#");    // ID
+    temp = strtok(NULL, "#");    // nom
+    strcpy(nom, temp);
+    temp = strtok(NULL, "#"); // prix
+    prix = atof(temp);
+    temp = strtok(NULL, "#"); // stock
+    stock = atoi(temp);
+    temp = strtok(NULL, "#"); // image
+    strcpy(image, temp);
+    setArticle(nom, prix, stock, image);
 }
