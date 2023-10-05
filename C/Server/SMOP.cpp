@@ -112,7 +112,7 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
         }
         else
         {
-            return false;
+            return true;
         }
         return false;
     }
@@ -210,7 +210,7 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
         retire(socket);
         *CheckLogin = false;
         sprintf(reponse, "LOGOUT#OK");
-        return false;
+        return true;
     }
 
     return true;

@@ -55,6 +55,7 @@ private slots:
     void on_pushButtonPayer_clicked();
     void createClientSocket();
     void setNewArticle(char *requete);
+    void serverError();
 
 private:
     Ui::WindowClient *ui;
@@ -63,6 +64,7 @@ private:
     char nom[20];
     int IClientSocket;
     int idArticle;
-    std::mutex consult_mtx;
+    std::mutex consultMtx;
+    std::mutex achatMtx;
 };
 #endif // WINDOWCLIENT_H

@@ -287,6 +287,7 @@ void WindowClient::on_pushButtonLogin_clicked()
     const char *username = getNom();
     const char *password = getMotDePasse();
     char requete[256];
+    int nbLus;
     if (strlen(username) > 64 || strlen(password) > 64)
     {
         dialogueErreur("login error", "Your username and password can't exceed 64 characters!");
@@ -300,12 +301,15 @@ void WindowClient::on_pushButtonLogin_clicked()
 
     sprintf(requete, "LOGIN#%s#%s", username, password);
     Send(IClientSocket, requete, strlen(requete));
+
     printf("En attente de reponse ... \n");
-    Receive(IClientSocket, requete);
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
+
     if (strstr(requete, "#OK") != NULL)
     {
         loginOK();
-        consult_mtx.lock();
+        consultMtx.lock();
         char requete[1024];
         idArticle = 1;
 
@@ -313,13 +317,14 @@ void WindowClient::on_pushButtonLogin_clicked()
         Send(IClientSocket, requete, strlen(requete));
 
         printf("En attente de reponse ... \n");
-        Receive(IClientSocket, requete);
+        if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+            serverError();
 
         if (strstr(requete, "#ERR") != NULL)
             idArticle++;
         else
             setNewArticle(requete);
-        consult_mtx.unlock();
+        consultMtx.unlock();
     }
 
     // printf("%s taille:%ld\n", username, strlen(username));
@@ -329,12 +334,15 @@ void WindowClient::on_pushButtonLogin_clicked()
 void WindowClient::on_pushButtonLogout_clicked()
 {
     char requete[256];
-    strcpy(requete, "LOGOUT");
+    int nbLus;
 
+    strcpy(requete, "LOGOUT");
     Send(IClientSocket, requete, strlen(requete));
 
     printf("En attente de reponse ... \n");
-    Receive(IClientSocket, requete);
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
+
     if (strstr(requete, "#OK") != NULL)
         logoutOK();
 }
@@ -342,58 +350,120 @@ void WindowClient::on_pushButtonLogout_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSuivant_clicked()
 {
-    consult_mtx.lock();
     char requete[1024];
+    int nbLus;
+    consultMtx.lock();
     int id_temp = idArticle + 1;
 
     sprintf(requete, "CONSULT#%d", id_temp);
     Send(IClientSocket, requete, strlen(requete));
 
     printf("En attente de reponse ... \n");
-    Receive(IClientSocket, requete);
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
 
     if (strstr(requete, "#OK") != NULL)
     {
         idArticle = id_temp;
         setNewArticle(requete);
     }
-    consult_mtx.unlock();
+    consultMtx.unlock();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonPrecedent_clicked()
 {
-    consult_mtx.lock();
     char requete[1024];
+    int nbLus;
+    consultMtx.lock();
     int id_temp = idArticle - 1;
 
     sprintf(requete, "CONSULT#%d", id_temp);
     Send(IClientSocket, requete, strlen(requete));
 
     printf("En attente de reponse ... \n");
-    Receive(IClientSocket, requete);
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
 
     if (strstr(requete, "#OK") != NULL)
     {
         idArticle = id_temp;
         setNewArticle(requete);
     }
-    consult_mtx.unlock();
+    consultMtx.unlock();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonAcheter_clicked()
 {
+    int nbLus, quantite, id;
+    char requete[1024];
+    char *nom;
+    float prix;
+
+    consultMtx.lock();
+    int id_temp = idArticle;
+    consultMtx.unlock();
+
+    achatMtx.lock();
+
+    sprintf(requete, "ACHAT#%d#%d", id_temp, getQuantite());
+    Send(IClientSocket, requete, strlen(requete));
+
+    printf("En attente de reponse ... \n");
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
+
+    strtok(requete, "#");         // ACHAT
+    id = atoi(strtok(NULL, "#")); // ID
+    if (id == -1)
+    {
+        dialogueErreur("Achat error", "Article introuvable. Achat impossible.");
+        achatMtx.unlock();
+        return;
+    }
+    nom = strtok(NULL, "#");            // Nom
+    prix = atof(strtok(NULL, "#"));     // Prix
+    quantite = atoi(strtok(NULL, "#")); // Quantité
+    if (quantite == 0)
+    {
+        dialogueErreur("Achat error", "Le stock n'est pas suffisant. Achat impossible.");
+        achatMtx.unlock();
+        return;
+    }
+    ajouteArticleTablePanier(nom, prix, quantite);
+
+    achatMtx.unlock();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
+    // int nbLus = 0, quantite, id;
+    // char requete[1024];
+    // char *nom;
+    // float prix;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonViderPanier_clicked()
 {
+    achatMtx.lock();
+    int nbLus;
+    char requete[256];
+    strcpy(requete, "CANCELALL");
+    Send(IClientSocket, requete, strlen(requete));
+
+    printf("En attente de reponse ... \n");
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
+
+    if (strstr(requete, "#OK") != NULL)
+        videTablePanier();
+    else
+        dialogueErreur("Server error", "Une erreur est survenue lors de la tentative du vidage du panier.");
+
+    achatMtx.unlock();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -410,21 +480,22 @@ void WindowClient::createClientSocket()
 
 void WindowClient::setNewArticle(char *requete)
 {
-    char nom[64], image[64];
-    char *temp;
+    char *nom, *image;
     float prix;
     int stock;
 
-    temp = strtok(requete, "#"); // CONSULT
-    temp = strtok(NULL, "#");    // OK
-    temp = strtok(NULL, "#");    // ID
-    temp = strtok(NULL, "#");    // nom
-    strcpy(nom, temp);
-    temp = strtok(NULL, "#"); // prix
-    prix = atof(temp);
-    temp = strtok(NULL, "#"); // stock
-    stock = atoi(temp);
-    temp = strtok(NULL, "#"); // image
-    strcpy(image, temp);
+    strtok(requete, "#");            // CONSULT
+    strtok(NULL, "#");               // OK
+    strtok(NULL, "#");               // Id
+    nom = strtok(NULL, "#");         // Nom
+    prix = atof(strtok(NULL, "#"));  // Prix
+    stock = atoi(strtok(NULL, "#")); // Stock
+    image = strtok(NULL, "#");       // Image
     setArticle(nom, prix, stock, image);
+}
+
+void WindowClient::serverError()
+{
+    dialogueErreur("Serveur Error", "La connexion avec le serveur semble interrompue");
+    close();
 }
