@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <mutex>
+#include <vector>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -56,6 +57,7 @@ private slots:
     void createClientSocket();
     void setNewArticle(char *requete);
     void serverError();
+    void updateCaddie();
 
 private:
     Ui::WindowClient *ui;
@@ -64,6 +66,8 @@ private:
     char nom[20];
     int IClientSocket;
     int idArticle;
+    std::vector<int> idsPanier;
+
     std::mutex consultMtx;
     std::mutex achatMtx;
 };

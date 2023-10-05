@@ -326,8 +326,6 @@ void WindowClient::on_pushButtonLogin_clicked()
             setNewArticle(requete);
         consultMtx.unlock();
     }
-
-    // printf("%s taille:%ld\n", username, strlen(username));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -398,8 +396,6 @@ void WindowClient::on_pushButtonAcheter_clicked()
 {
     int nbLus, quantite, id;
     char requete[1024];
-    char *nom;
-    float prix;
 
     consultMtx.lock();
     int id_temp = idArticle;
@@ -422,8 +418,8 @@ void WindowClient::on_pushButtonAcheter_clicked()
         achatMtx.unlock();
         return;
     }
-    nom = strtok(NULL, "#");            // Nom
-    prix = atof(strtok(NULL, "#"));     // Prix
+    strtok(NULL, "#");                  // Nom
+    atof(strtok(NULL, "#"));            // Prix
     quantite = atoi(strtok(NULL, "#")); // Quantité
     if (quantite == 0)
     {
@@ -431,7 +427,9 @@ void WindowClient::on_pushButtonAcheter_clicked()
         achatMtx.unlock();
         return;
     }
-    ajouteArticleTablePanier(nom, prix, quantite);
+
+    // Update table panier
+    updateCaddie();
 
     achatMtx.unlock();
 }
@@ -439,10 +437,31 @@ void WindowClient::on_pushButtonAcheter_clicked()
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::on_pushButtonSupprimer_clicked()
 {
-    // int nbLus = 0, quantite, id;
-    // char requete[1024];
-    // char *nom;
-    // float prix;
+    int nbLus = 0;
+    char requete[1024];
+    int indice = getIndiceArticleSelectionne();
+
+    if (indice == -1)
+    {
+        dialogueMessage("Aucun article sélectionné", "Veuillez sélectionner un article à supprimer du panier");
+        return;
+    }
+
+    achatMtx.lock();
+
+    sprintf(requete, "CANCEL#%d", idsPanier[indice]);
+    Send(IClientSocket, requete, strlen(requete));
+
+    printf("En attente de reponse ... \n");
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
+
+    if (strstr(requete, "#OK") != NULL)
+        updateCaddie();
+    else
+        dialogueErreur("Suppresion error", "Une erreur est survenue lors de la tentative de suppression de l'article dans le panier");
+
+    achatMtx.unlock();
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -498,4 +517,34 @@ void WindowClient::serverError()
 {
     dialogueErreur("Serveur Error", "La connexion avec le serveur semble interrompue");
     close();
+}
+
+void WindowClient::updateCaddie()
+{
+    char requete[1024];
+    char *nom, *temp;
+    float prix;
+    int quantite, nbLus;
+
+    videTablePanier();
+
+    sprintf(requete, "CADDIE");
+    Send(IClientSocket, requete, strlen(requete));
+
+    printf("En attente de reponse ... \n");
+    if ((nbLus = Receive(IClientSocket, requete)) <= 0)
+        serverError();
+
+    strtok(requete, "#");     // CADDIE
+    temp = strtok(NULL, "#"); // first Id
+    idsPanier.clear();
+    while (temp != NULL)
+    {
+        idsPanier.push_back(atoi(temp));
+        nom = strtok(NULL, "#");            // Nom
+        prix = atof(strtok(NULL, "#"));     // Prix
+        quantite = atoi(strtok(NULL, "#")); // Quantité
+        ajouteArticleTablePanier(nom, prix, quantite);
+        temp = strtok(NULL, "#"); // Id
+    }
 }
