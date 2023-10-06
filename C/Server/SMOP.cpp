@@ -34,7 +34,8 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
         {
             char *Login = strtok(NULL, "#");
             char *Password = strtok(NULL, "#");
-            if (SMOP_Login(MysqlBase, Login, Password))
+            bool newUser = atoi(strtok(NULL, "#"));
+            if (SMOP_Login(MysqlBase, Login, Password, newUser))
             {
                 sprintf(reponse, "LOGIN#%s#%s#OK", Login, Password);
                 *CheckLogin = true;
@@ -211,10 +212,10 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
     return true;
 }
 
-bool SMOP_Login(MYSQL *MysqlBase, const char *user, const char *password)
+bool SMOP_Login(MYSQL *MysqlBase, const char *user, const char *password, bool newUser)
 {
 
-    return UserConnexion(MysqlBase, user, password);
+    return UserConnexion(MysqlBase, user, password, newUser);
 }
 
 bool SMOP_Consult(MYSQL *MysqlBase, int idAliment, char *pCReponse)

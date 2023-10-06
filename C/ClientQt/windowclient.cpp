@@ -299,7 +299,7 @@ void WindowClient::on_pushButtonLogin_clicked()
         return;
     }
 
-    sprintf(requete, "LOGIN#%s#%s", username, password);
+    sprintf(requete, "LOGIN#%s#%s#%d", username, password, isNouveauClientChecked());
     Send(IClientSocket, requete, strlen(requete));
 
     printf("En attente de reponse ... \n");
