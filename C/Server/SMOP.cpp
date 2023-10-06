@@ -34,7 +34,8 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
         {
             char *Login = strtok(NULL, "#");
             char *Password = strtok(NULL, "#");
-            if (SMOP_Login(MysqlBase, Login, Password))
+            bool newUser = atoi(strtok(NULL, "#"));
+            if (SMOP_Login(MysqlBase, Login, Password, newUser))
             {
                 sprintf(reponse, "LOGIN#%s#%s#OK", Login, Password);
                 *CheckLogin = true;
@@ -179,13 +180,7 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
 
     if (strcmp(ptr, "CANCELALL") == 0)
     {
-        bool check = true;
-        while (pCaddie->id != -1 && check == true)
-        {
-            check = UserCancel(MysqlBase, pCaddie->id, pCaddie->quantite);
-            pCaddie->id = -1;
-            pCaddie++;
-        }
+        bool check = cancelAll(MysqlBase, pCaddie);
 
         if (!check)
         {
@@ -207,6 +202,7 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
     if (strcmp(ptr, "LOGOUT") == 0)
     {
         printf("\t[THREAD %p] LOGOUT\n", pthread_self());
+        cancelAll(MysqlBase, pCaddie);
         retire(socket);
         *CheckLogin = false;
         sprintf(reponse, "LOGOUT#OK");
@@ -216,10 +212,10 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
     return true;
 }
 
-bool SMOP_Login(MYSQL *MysqlBase, const char *user, const char *password)
+bool SMOP_Login(MYSQL *MysqlBase, const char *user, const char *password, bool newUser)
 {
 
-    return UserConnexion(MysqlBase, user, password);
+    return UserConnexion(MysqlBase, user, password, newUser);
 }
 
 bool SMOP_Consult(MYSQL *MysqlBase, int idAliment, char *pCReponse)
@@ -230,6 +226,18 @@ bool SMOP_Consult(MYSQL *MysqlBase, int idAliment, char *pCReponse)
 bool SMOP_Achat(MYSQL *MysqlBase, int IdAliment, int IQuantite, char *pCreponse)
 {
     return UserAchat(MysqlBase, IdAliment, IQuantite, pCreponse);
+}
+
+bool cancelAll(MYSQL *MysqlBase, ARTICLEINPANNIER *pCaddie)
+{
+    bool check = true;
+    while (pCaddie->id != -1 && check == true)
+    {
+        check = UserCancel(MysqlBase, pCaddie->id, pCaddie->quantite);
+        pCaddie->id = -1;
+        pCaddie++;
+    }
+    return check;
 }
 
 int estPresent(int socket)

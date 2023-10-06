@@ -299,7 +299,7 @@ void WindowClient::on_pushButtonLogin_clicked()
         return;
     }
 
-    sprintf(requete, "LOGIN#%s#%s", username, password);
+    sprintf(requete, "LOGIN#%s#%s#%d", username, password, isNouveauClientChecked());
     Send(IClientSocket, requete, strlen(requete));
 
     printf("En attente de reponse ... \n");
@@ -490,6 +490,7 @@ void WindowClient::on_pushButtonPayer_clicked()
 {
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::createClientSocket()
 {
     char ip[32];
@@ -497,6 +498,7 @@ void WindowClient::createClientSocket()
     IClientSocket = ClientSocket(ip, 50000);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::setNewArticle(char *requete)
 {
     char *nom, *image;
@@ -513,12 +515,14 @@ void WindowClient::setNewArticle(char *requete)
     setArticle(nom, prix, stock, image);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::serverError()
 {
     dialogueErreur("Serveur Error", "La connexion avec le serveur semble interrompue");
     close();
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void WindowClient::updateCaddie()
 {
     char requete[1024];

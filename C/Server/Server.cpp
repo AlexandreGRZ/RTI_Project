@@ -155,6 +155,7 @@ void TraitementConnexion(int sService)
       if (nbLus == 0)
       {
          printf("\t[THREAD %p] Fin de connexion du client.\n", pthread_self());
+         cancelAll(MysqlBase, Caddie);
          close(sService);
          return;
       }
