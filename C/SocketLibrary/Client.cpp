@@ -1,7 +1,6 @@
 #ifndef CLIENT_CPP
 #define CLIENT_CPP
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -9,126 +8,123 @@
 #include <signal.h>
 #include "SocketLibrary.h"
 
-
 void handlerSIGINT(int sig);
 int IClientSocket;
 
-int main(int argc,char* argv[])
+int main(int argc, char *argv[])
 {
-    struct sigaction A;
-    A.sa_handler = handlerSIGINT;
-    A.sa_flags = 0;
-    sigaction(SIGINT,&A,NULL);
+  struct sigaction A;
+  A.sa_handler = handlerSIGINT;
+  A.sa_flags = 0;
+  sigaction(SIGINT, &A, NULL);
 
+  int num = atoi(argv[2]);
+  IClientSocket = ClientSocket(argv[1], num);
 
-    int num = atoi(argv[2]);
-    IClientSocket = ClientSocket(argv[1],num);
+  char Cmessage[1000];
 
-    char Cmessage[1000];
+  strcpy(&Cmessage[0], "LOGIN#Alex#abc123");
 
-    strcpy(&Cmessage[0],"LOGIN#Alex#abc123");
-    
-    printf("Message Envoyer ! \n");
+  printf("Message Envoyé ! \n");
 
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+  Send(IClientSocket, &Cmessage[0], strlen(&Cmessage[0]));
 
-    printf("En attente de reponse ... \n");
+  printf("En attente de reponse ... \n");
 
-    Receive(IClientSocket, &Cmessage[0]);
+  Receive(IClientSocket, &Cmessage[0]);
 
-    printf("Message recu ! \n");
+  printf("Message recu ! \n");
 
-    sleep(2);
+  sleep(2);
 
-    strcpy(&Cmessage[0],"ACHAT#8#1");
-    
-    printf("Message Envoyer ! \n");
+  strcpy(&Cmessage[0], "ACHAT#8#1");
 
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+  printf("Message Envoyé ! \n");
 
-    printf("En attente de reponse ... \n");
+  Send(IClientSocket, &Cmessage[0], strlen(&Cmessage[0]));
 
-    Receive(IClientSocket, &Cmessage[0]);
+  printf("En attente de reponse ... \n");
 
-    printf("Message recu ! \n");
+  Receive(IClientSocket, &Cmessage[0]);
 
-    sleep(2);
+  printf("Message recu ! \n");
 
-    strcpy(&Cmessage[0],"ACHAT#10#2");
-    
-    printf("Message Envoyer ! \n");
+  sleep(2);
 
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+  strcpy(&Cmessage[0], "ACHAT#10#2");
 
-    printf("En attente de reponse ... \n");
+  printf("Message Envoyé ! \n");
 
-    Receive(IClientSocket, &Cmessage[0]);
+  Send(IClientSocket, &Cmessage[0], strlen(&Cmessage[0]));
 
-    printf("Message recu ! \n");
+  printf("En attente de reponse ... \n");
 
-    sleep(2);
+  Receive(IClientSocket, &Cmessage[0]);
 
-    strcpy(&Cmessage[0],"ACHAT#2#1");
-    
-    printf("Message Envoyer ! \n");
+  printf("Message recu ! \n");
 
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+  sleep(2);
 
-    printf("En attente de reponse ... \n");
+  strcpy(&Cmessage[0], "ACHAT#2#1");
 
-    Receive(IClientSocket, &Cmessage[0]);
+  printf("Message Envoyé ! \n");
 
-    printf("Message recu ! \n");
+  Send(IClientSocket, &Cmessage[0], strlen(&Cmessage[0]));
 
-    sleep(2);
+  printf("En attente de reponse ... \n");
 
-    strcpy(&Cmessage[0],"CANCELALL");
-    
-    printf("Message Envoyer ! \n");
+  Receive(IClientSocket, &Cmessage[0]);
 
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+  printf("Message recu ! \n");
 
-    printf("En attente de reponse ... \n");
+  sleep(2);
 
-    Receive(IClientSocket, &Cmessage[0]);
+  strcpy(&Cmessage[0], "CADDIE");
 
-    printf("Message recu ! \n");
+  printf("Message Envoyé ! \n");
 
-    sleep(2);
+  Send(IClientSocket, &Cmessage[0], strlen(&Cmessage[0]));
 
-    strcpy(&Cmessage[0],"CADDIE");
-    
-    printf("Message Envoyer ! \n");
+  printf("En attente de reponse ... \n");
 
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+  Receive(IClientSocket, &Cmessage[0]);
 
-    printf("En attente de reponse ... \n");
+  printf("Message recu ! \n");
 
-    Receive(IClientSocket, &Cmessage[0]);
+  sleep(2);
 
-    printf("Message recu ! \n");
+  strcpy(&Cmessage[0], "CANCELALL");
 
-    sleep(2);
+  printf("Message Envoyé ! \n");
 
-    strcpy(&Cmessage[0],"LOGOUT");
-    
-    printf("Message Envoyer ! \n");
+  Send(IClientSocket, &Cmessage[0], strlen(&Cmessage[0]));
 
-    Send(IClientSocket,&Cmessage[0], strlen(&Cmessage[0]));
+  printf("En attente de reponse ... \n");
 
-    printf("En attente de reponse ... \n");
+  Receive(IClientSocket, &Cmessage[0]);
 
-    Receive(IClientSocket, &Cmessage[0]);
+  printf("Message recu ! \n");
 
-    printf("Message recu ! \n");
+  sleep(2);
 
-    pause();
+  strcpy(&Cmessage[0], "LOGOUT");
 
+  printf("Message Envoyé ! \n");
+
+  Send(IClientSocket, &Cmessage[0], strlen(&Cmessage[0]));
+
+  printf("En attente de reponse ... \n");
+
+  Receive(IClientSocket, &Cmessage[0]);
+
+  printf("Message recu ! \n");
+
+  pause();
 }
 
 void handlerSIGINT(int sig)
 {
-  
+
   close(IClientSocket);
 
   exit(1);

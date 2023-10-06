@@ -2,9 +2,14 @@
 #define WINDOWCLIENT_H
 
 #include <QMainWindow>
+#include <mutex>
+#include <vector>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class WindowClient; }
+namespace Ui
+{
+    class WindowClient;
+}
 QT_END_NAMESPACE
 
 class WindowClient : public QMainWindow
@@ -49,11 +54,21 @@ private slots:
     void on_pushButtonSupprimer_clicked();
     void on_pushButtonViderPanier_clicked();
     void on_pushButtonPayer_clicked();
+    void createClientSocket();
+    void setNewArticle(char *requete);
+    void serverError();
+    void updateCaddie();
 
 private:
     Ui::WindowClient *ui;
 
     char motDePasse[20];
     char nom[20];
+    int IClientSocket;
+    int idArticle;
+    std::vector<int> idsPanier;
+
+    std::mutex consultMtx;
+    std::mutex achatMtx;
 };
 #endif // WINDOWCLIENT_H
