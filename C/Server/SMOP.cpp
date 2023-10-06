@@ -179,13 +179,7 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
 
     if (strcmp(ptr, "CANCELALL") == 0)
     {
-        bool check = true;
-        while (pCaddie->id != -1 && check == true)
-        {
-            check = UserCancel(MysqlBase, pCaddie->id, pCaddie->quantite);
-            pCaddie->id = -1;
-            pCaddie++;
-        }
+        bool check = cancelAll(MysqlBase, pCaddie);
 
         if (!check)
         {
@@ -207,6 +201,7 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
     if (strcmp(ptr, "LOGOUT") == 0)
     {
         printf("\t[THREAD %p] LOGOUT\n", pthread_self());
+        cancelAll(MysqlBase, pCaddie);
         retire(socket);
         *CheckLogin = false;
         sprintf(reponse, "LOGOUT#OK");
@@ -230,6 +225,18 @@ bool SMOP_Consult(MYSQL *MysqlBase, int idAliment, char *pCReponse)
 bool SMOP_Achat(MYSQL *MysqlBase, int IdAliment, int IQuantite, char *pCreponse)
 {
     return UserAchat(MysqlBase, IdAliment, IQuantite, pCreponse);
+}
+
+bool cancelAll(MYSQL *MysqlBase, ARTICLEINPANNIER *pCaddie)
+{
+    bool check = true;
+    while (pCaddie->id != -1 && check == true)
+    {
+        check = UserCancel(MysqlBase, pCaddie->id, pCaddie->quantite);
+        pCaddie->id = -1;
+        pCaddie++;
+    }
+    return check;
 }
 
 int estPresent(int socket)
