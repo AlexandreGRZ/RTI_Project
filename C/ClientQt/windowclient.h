@@ -17,7 +17,7 @@ class WindowClient : public QMainWindow
     Q_OBJECT
 
 public:
-    WindowClient(QWidget *parent = nullptr);
+    WindowClient(int argc, char **argv, QWidget *parent = nullptr);
     ~WindowClient();
 
     // Fonctions utiles (ne pas modifier)
@@ -54,7 +54,7 @@ private slots:
     void on_pushButtonSupprimer_clicked();
     void on_pushButtonViderPanier_clicked();
     void on_pushButtonPayer_clicked();
-    void createClientSocket();
+    void createClientSocket(char *ip, int port);
     void setNewArticle(char *requete);
     void serverError();
     void updateCaddie();

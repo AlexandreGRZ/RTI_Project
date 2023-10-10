@@ -10,7 +10,7 @@ extern WindowClient *w;
 
 #define REPERTOIRE_IMAGES "images/"
 
-WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
+WindowClient::WindowClient(int argc, char **argv, QWidget *parent) : QMainWindow(parent), ui(new Ui::WindowClient)
 {
     ui->setupUi(this);
 
@@ -36,7 +36,7 @@ WindowClient::WindowClient(QWidget *parent) : QMainWindow(parent), ui(new Ui::Wi
     // Exemples à supprimer
     // ajouteArticleTablePanier("cerises", 8.96, 2);
 
-    createClientSocket();
+    createClientSocket(argv[1], atoi(argv[2]));
 }
 
 WindowClient::~WindowClient()
@@ -491,11 +491,9 @@ void WindowClient::on_pushButtonPayer_clicked()
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void WindowClient::createClientSocket()
+void WindowClient::createClientSocket(char *ip, int port)
 {
-    char ip[32];
-    sprintf(ip, "127.0.0.1");
-    IClientSocket = ClientSocket(ip, 50000);
+    IClientSocket = ClientSocket(ip, port);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
