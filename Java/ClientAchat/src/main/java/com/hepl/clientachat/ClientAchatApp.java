@@ -14,6 +14,7 @@ public class ClientAchatApp extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 780, 620);
         stage.setTitle("Le Maraicher en ligne");
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 
