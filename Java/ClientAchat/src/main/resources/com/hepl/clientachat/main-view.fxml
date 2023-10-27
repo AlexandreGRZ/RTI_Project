@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="780.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hepl.clientachat.Controller">
+  <padding>
+    <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+  </padding>
+   <HBox alignment="CENTER" prefHeight="50.0" prefWidth="400.0" spacing="5.0" VBox.vgrow="NEVER">
+      <children>
+         <Label text="Nom :" />
+         <TextField fx:id="TextFieldLogin" HBox.hgrow="ALWAYS" />
+         <Label layoutX="10.0" layoutY="10.0" text="Mot de passe :" />
+         <TextField fx:id="TextFieldPassword" layoutX="38.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
+         <Button mnemonicParsing="false" onAction="#onLoginClick" prefWidth="75.0" text="Login">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
+         <Button disable="true" layoutX="356.0" layoutY="14.0" mnemonicParsing="false" onAction="#onLogoutClick" prefWidth="75.0" text="Logout">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></Button>
+         <CheckBox fx:id="checkBoxNewUser" mnemonicParsing="false" text="Nouveau Client">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor></CheckBox>
+      </children>
+   </HBox>
+   <VBox prefHeight="150.0" prefWidth="400.0" spacing="5.0" VBox.vgrow="ALWAYS">
+      <children>
+         <Label text="Magasin" />
+         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" style="-fx-background-color: dedede;" VBox.vgrow="ALWAYS">
+            <children>
+               <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                  <children>
+                     <ImageView fx:id="imageArticle" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+                  </children>
+               </VBox>
+               <GridPane HBox.hgrow="ALWAYS">
+                 <columnConstraints>
+                   <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                 </columnConstraints>
+                 <rowConstraints>
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                 </rowConstraints>
+                  <children>
+                     <TextField fx:id="TextFieldArticle" editable="false" GridPane.columnIndex="1">
+                        <GridPane.margin>
+                           <Insets left="5.0" right="5.0" />
+                        </GridPane.margin>
+                        <cursor>
+                           <Cursor fx:constant="DEFAULT" />
+                        </cursor></TextField>
+                     <TextField fx:id="TextFieldPrice" editable="false" focusTraversable="false" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <GridPane.margin>
+                           <Insets left="5.0" right="5.0" />
+                        </GridPane.margin>
+                        <cursor>
+                           <Cursor fx:constant="DEFAULT" />
+                        </cursor></TextField>
+                     <TextField fx:id="TextFieldStock" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <GridPane.margin>
+                           <Insets left="5.0" right="5.0" />
+                        </GridPane.margin>
+                        <cursor>
+                           <Cursor fx:constant="DEFAULT" />
+                        </cursor></TextField>
+                     <Spinner fx:id="SpinnerQuantity" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <cursor>
+                           <Cursor fx:constant="HAND" />
+                        </cursor>
+                        <GridPane.margin>
+                           <Insets left="10.0" />
+                        </GridPane.margin>
+                     </Spinner>
+                     <Label text="Article " />
+                     <Label text="Prix à l'unité " GridPane.rowIndex="1" />
+                     <Label text="Stock " GridPane.rowIndex="2" />
+                     <Label text="Quantité souhaitée " GridPane.rowIndex="3" />
+                  </children>
+               </GridPane>
+               <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                  <children>
+                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                        <children>
+                           <Button alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onPreviousClick" prefHeight="50.0" prefWidth="50.0" text="&lt;&lt;&lt;" HBox.hgrow="ALWAYS" />
+                           <Button alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onNextClick" prefHeight="50.0" prefWidth="50.0" text="&gt;&gt;&gt;" HBox.hgrow="ALWAYS" />
+                        </children>
+                     </HBox>
+                     <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                        <children>
+                           <Button alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onBuyClick" prefWidth="75.0" text="Acheter" />
+                        </children>
+                        <padding>
+                           <Insets bottom="14.0" />
+                        </padding>
+                     </HBox>
+                  </children>
+               </VBox>
+            </children>
+            <padding>
+               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding>
+         </HBox>
+      </children></VBox>
+   <VBox prefHeight="150.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
+      <children>
+         <Label text="Panier" />
+         <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0" style="-fx-background-color: dedede;" VBox.vgrow="ALWAYS">
+            <children>
+               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="400.0" spacing="5.0" VBox.vgrow="ALWAYS">
+                  <children>
+                     <TableView fx:id="TableViewPanier" prefHeight="94.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
+                       <columns>
+                         <TableColumn fx:id="ColumnArticle" prefWidth="${TableViewPanier.width*0.34}" text="Article" />
+                         <TableColumn fx:id="ColumnPrice" prefWidth="${TableViewPanier.width*0.34}" text="Prix à l'unité" />
+                           <TableColumn fx:id="ColumnQuantity" prefWidth="${TableViewPanier.width*0.34}" text="Quantité" />
+                       </columns>
+                     </TableView>
+                     <VBox alignment="TOP_CENTER" minWidth="120.0" prefHeight="200.0" prefWidth="100.0">
+                        <children>
+                           <Button disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onDeleteArticleClick" text="Supprimer article">
+                              <VBox.margin>
+                                 <Insets top="20.0" />
+                              </VBox.margin></Button>
+                           <Button disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onEmptyCartClick" text="Vider le panier">
+                              <VBox.margin>
+                                 <Insets top="10.0" />
+                              </VBox.margin></Button>
+                           <Button disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onConfirmClick" text="Confirmer achat">
+                              <VBox.margin>
+                                 <Insets top="105.0" />
+                              </VBox.margin></Button>
+                        </children>
+                     </VBox>
+                  </children>
+               </HBox>
+               <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="200.0" spacing="5.0">
+                  <children>
+                     <Label text="Total à payer :" />
+                     <TextField editable="false">
+                        <cursor>
+                           <Cursor fx:constant="DEFAULT" />
+                        </cursor></TextField>
+                  </children>
+                  <VBox.margin>
+                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                  </VBox.margin>
+               </HBox>
+            </children></VBox>
+      </children></VBox>
+</VBox>
