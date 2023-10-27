@@ -3,7 +3,7 @@
 ### Client C -> Serveur C :heavy_check_mark:
 ## Second Part : 
 ### Java Achat
-* GUI ClientAchat heavy_check_mark:
+* GUI ClientAchat :heavy_check_mark:
 * Protocol librairy
 ### Java Payement
 * GUI Payement
