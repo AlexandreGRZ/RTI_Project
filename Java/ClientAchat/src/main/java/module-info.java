@@ -3,6 +3,6 @@ module com.hepl.clientachat {
     requires javafx.fxml;
             
                             
-    opens com.hepl.clientachat to javafx.fxml;
-    exports com.hepl.clientachat;
+    opens com.hepl.ClientAchat to javafx.fxml;
+    exports com.hepl.ClientAchat;
 }

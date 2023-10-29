@@ -1,4 +1,4 @@
-package com.hepl.clientachat.Model;
+package com.hepl.ClientAchat.Model;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

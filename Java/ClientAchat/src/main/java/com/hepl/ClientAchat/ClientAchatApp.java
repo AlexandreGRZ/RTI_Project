@@ -1,4 +1,4 @@
-package com.hepl.clientachat;
+package com.hepl.ClientAchat;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
