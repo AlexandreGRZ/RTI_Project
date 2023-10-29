@@ -19,6 +19,10 @@ pthread_mutex_t mutexClients = PTHREAD_MUTEX_INITIALIZER;
 
 bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *CheckLogin, ARTICLEINPANNIER *pCaddie)
 {
+    // Skip char taille trame quand envoyé depuis client java
+    if (strlen(requete) == (int)requete[0] - 1)
+        requete = requete + 1;
+
     char *ptr = strtok(requete, "#");
 
     if (strcmp(ptr, "LOGIN") == 0)
