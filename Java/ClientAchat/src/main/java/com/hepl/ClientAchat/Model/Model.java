@@ -1,4 +1,4 @@
-package com.hepl.clientachat.Model;
+package com.hepl.ClientAchat.Model;
 
 import java.util.ArrayList;
 

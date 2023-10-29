@@ -1,7 +1,7 @@
-package com.hepl.clientachat;
+package com.hepl.ClientAchat;
 
-import com.hepl.clientachat.Model.Article;
-import com.hepl.clientachat.Model.Model;
+import com.hepl.ClientAchat.Model.Article;
+import com.hepl.ClientAchat.Model.Model;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
