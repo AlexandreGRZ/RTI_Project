@@ -74,9 +74,8 @@ bool UserConnexion(MYSQL *ConnexionBD, const char *Login, const char *Password, 
                 return false;
             }
 
-            printf("Test\n");
             // Création de la requête préparée, insertion du pseudo et mdp dans la table clients
-            strcpy(query, "INSERT INTO clients (pseudo, password) VALUES (?, ?)");
+            strcpy(query, "INSERT INTO clients (NULL, pseudo, password) VALUES (?, ?)");
             if (mysql_stmt_prepare(stmt, query, strlen(query)) != 0)
             {
                 fprintf(stderr, "mysql_stmt_prepare() failed\n");
