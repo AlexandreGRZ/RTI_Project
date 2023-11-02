@@ -1,4 +1,4 @@
-package com.hepl.PayementServer;
+package com.hepl.payment;
 
 import java.sql.*;
 
