@@ -2,16 +2,16 @@ package com.hepl.bridge;
 
 import java.sql.*;
 
-public class BridgeJDBC {
+public class DbConnection {
     private Connection connection;
-    private static final String SERVER = "";// à ajouter
-    private static final String DB_NAME = "";
-    private static String url = "jdbc:mysql://" + SERVER + "/" + DB_NAME;
-    private static String user = "";
-    private static String password = "";
+    private static final String SERVER = "192.168.1.63";// VM ip
+    private static final String DB_NAME = "PourStudent";
+    private static final String URL = "jdbc:mysql://" + SERVER + "/" + DB_NAME;
+    private static final String USER = "Student";
+    private static final String PASSWORD = "PassStudent1_";
 
-    public BridgeJDBC() throws SQLException {
-        connection = DriverManager.getConnection(url, user, password);
+    public DbConnection() throws SQLException {
+        connection = DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
     public synchronized ResultSet executeQuery(String sql) throws SQLException {
