@@ -1,4 +1,4 @@
-package com.hepl.socketlibrary;
+package com.hepl.purchaseclient.socketlibrary;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

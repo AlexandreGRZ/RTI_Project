@@ -1,4 +1,4 @@
-package com.hepl.socketlibrary;
+package com.hepl.purchaseclient.socketlibrary;
 
 public class TestSocketApp {
     private static ClientSocket clientSocket;
