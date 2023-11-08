@@ -6,20 +6,39 @@
 
 int main()
 {
-   // Connexion a MySql
-   printf("Connection a la BD...\n");
+   // Connexion à MySQL
+   printf("Connexion à la BD...\n");
    MYSQL *connexion = mysql_init(NULL);
-   mysql_real_connect(connexion, "localhost", "Student", "PassStudent1_", "PourStudent", 0, 0, 0);
+   mysql_real_connect(connexion, "localhost", "Student", "PassStudent1_", "PourStudent", 0, NULL, 0);
 
-   // Creation d'une table UNIX_FINAL
-   printf("Creation de la table articles...\n");
-   mysql_query(connexion, "drop table clients;");
-   mysql_query(connexion, "create table clients(pseudo varchar(64) primary key, password varchar(64));");
+   // Vérification de la connexion
+   if (connexion == NULL)
+   {
+      fprintf(stderr, "Échec de la connexion à la base de données : %s\n", mysql_error(connexion));
+      return 1;
+   }
 
-   mysql_query(connexion, "insert into clients values('Alex', 'abc123')");
-   mysql_query(connexion, "insert into clients values('Cyril', 'abc123')");
+   // Création de la table clients
+   printf("Création de la table clients...\n");
+   mysql_query(connexion, "DROP TABLE IF EXISTS clients;");
+   mysql_query(connexion, "CREATE TABLE clients(id INT AUTO_INCREMENT PRIMARY KEY, pseudo VARCHAR(64), password VARCHAR(64));");
 
-   // Déconnexion de la BD
+   // Création de la table factures
+   printf("Création de la table factures...\n");
+   mysql_query(connexion, "DROP TABLE IF EXISTS factures;");
+   mysql_query(connexion, "CREATE TABLE factures(id INT AUTO_INCREMENT PRIMARY KEY, idClient INT, date DATE, montant FLOAT, paye BOOLEAN);");
+
+   // Création de la table ventes
+   printf("Création de la table ventes...\n");
+   mysql_query(connexion, "DROP TABLE IF EXISTS ventes;");
+   mysql_query(connexion, "CREATE TABLE ventes(idFacture INT, idArticle INT, quantite INT, PRIMARY KEY (idFacture, idArticle), FOREIGN KEY (idFacture) REFERENCES factures(id), FOREIGN KEY (idArticle) REFERENCES articles(id));");
+
+   // Insertion de données
+   printf("Insertions de 2 clients de test\n");
+   mysql_query(connexion, "INSERT INTO clients (pseudo, password) VALUES ('Alex', 'abc123')");
+   mysql_query(connexion, "INSERT INTO clients (pseudo, password) VALUES ('Cyril', 'abc123')");
+
+   // Déconnexion de la base de données
    mysql_close(connexion);
 
    return 0;
