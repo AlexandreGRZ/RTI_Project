@@ -1,7 +1,10 @@
 package com.hepl;
 
 import com.hepl.bridge.DbConnection;
-import com.hepl.protocol.Protocol;
+import com.hepl.protocol.EndConnectionException;
+import com.hepl.protocol.interfaces.Protocol;
+import com.hepl.protocol.interfaces.Request;
+import com.hepl.protocol.interfaces.Response;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,7 +21,7 @@ class ThreadClient extends Thread {
     Protocol protocol;
 
     ThreadClient(WaitingQ queue, Protocol protocol) throws IOException, SQLException {
-//        connection = new DbConnection();
+        connection = new DbConnection();
         this.queue = queue;
         this.protocol = protocol;
     }
@@ -31,7 +34,7 @@ class ThreadClient extends Thread {
             try {
                 System.out.println("[" + getName() + "]Waiting for a new client connection...");
                 socket = queue.getConnection();
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 System.out.println("[" + getName() + "]Thread interruption.");
                 return;
             }
@@ -42,36 +45,26 @@ class ThreadClient extends Thread {
                 oos = new ObjectOutputStream(socket.getOutputStream());
 
                 // Interaction with the client
-
                 while (true){
-                    try{
-                        Thread.sleep(200);
-                    }catch (InterruptedException e){
-                        break;
-                    }
+                    Request request = (Request) ois.readObject();
+                    Response response = protocol.handleRequest(request, connection);
+                    oos.writeObject(response);
                 }
-
-//                while (true){
-//                    Request request = (Request) ois.readObject();
-//                    Response response = protocol.HandleRequest(request, socket);
-//                    oos.write(response);
-//                }
-
             }
-//            catch (EndConnectionException e){
-//                System.out.println("[" + getName() + "]End of connection with client.");
-//            }
-            catch (IOException e){
-                System.out.println("[" + getName() + "]IOException : "+e.getMessage());
+            catch (EndConnectionException e){
+                System.out.println("[" + getName() + "]End of connection with client.");
             }
-//            catch (ClassNotFoundException e){
-//                System.out.println("[" + getName() + "]Invalid request!");
-//            }
+            catch (IOException e) {
+                System.out.println("[" + getName() + "]IOException : " + e.getMessage());
+            }
+            catch (ClassNotFoundException e){
+                System.out.println("[" + getName() + "]Invalid request!");
+            }
             finally {
                 try {
                     socket.close();
                 } catch (IOException e) {
-                    System.out.println("[" + getName() + "IOException while trying to close socket : "+e.getMessage());
+                    System.out.println("[" + getName() + "IOException while trying to close socket : " + e.getMessage());
                 }
             }
         }

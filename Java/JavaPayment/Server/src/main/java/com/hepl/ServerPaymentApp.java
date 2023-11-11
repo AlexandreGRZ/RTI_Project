@@ -1,10 +1,8 @@
 package com.hepl;
 
-import java.util.Properties;
+import com.hepl.protocol.VESPAP;
 
-// Import pour fonction test DB
-import java.sql.ResultSet;
-import com.hepl.bridge.DbConnection;
+import java.util.Properties;
 
 public class ServerPaymentApp {
     public static void main(String[] args) throws Exception {
@@ -15,29 +13,14 @@ public class ServerPaymentApp {
         int poolSize = Integer.parseInt(config.getProperty("server.nbrThreads"));
 
         // Start thread server
-        ThreadServer threadServer = new ThreadServer(port, null, poolSize);// Protocole needs to be added
+        ThreadServer threadServer = new ThreadServer(port, new VESPAP(), poolSize);// Protocole needs to be added
         threadServer.start();
 
-        // Wainting system (je suis pas convaincu mais bon)
-        try{
+        // Waiting system (je suis pas convaincu mais bon)
+        try {
             threadServer.join();
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             threadServer.interrupt();
         }
-    }
-
-
-
-    private static void testDBConnection()throws Exception{
-        DbConnection connection = new DbConnection();
-
-        ResultSet resultSet = connection.executeQuery("SELECT * FROM clients;");
-
-        while (resultSet.next()) {
-            String pseudo = resultSet.getString("pseudo");
-            System.out.println(pseudo);
-        }
-
-        connection.close();
     }
 }
