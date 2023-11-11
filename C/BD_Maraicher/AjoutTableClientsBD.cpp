@@ -23,6 +23,11 @@ int main()
    mysql_query(connexion, "DROP TABLE IF EXISTS clients;");
    mysql_query(connexion, "CREATE TABLE clients(id INT AUTO_INCREMENT PRIMARY KEY, pseudo VARCHAR(64), password VARCHAR(64));");
 
+   // Création de la table employees
+   printf("Création de la table employees...\n");
+   mysql_query(connexion, "DROP TABLE IF EXISTS employees;");
+   mysql_query(connexion, "CREATE TABLE employees(id INT AUTO_INCREMENT PRIMARY KEY, pseudo VARCHAR(64), password VARCHAR(64));");
+
    // Création de la table factures
    printf("Création de la table factures...\n");
    mysql_query(connexion, "DROP TABLE IF EXISTS factures;");
@@ -37,6 +42,9 @@ int main()
    printf("Insertions de 2 clients de test\n");
    mysql_query(connexion, "INSERT INTO clients (pseudo, password) VALUES ('Alex', 'abc123')");
    mysql_query(connexion, "INSERT INTO clients (pseudo, password) VALUES ('Cyril', 'abc123')");
+   printf("Insertions de 2 employees de test\n");
+   mysql_query(connexion, "INSERT INTO employees (pseudo, password) VALUES ('Alex', 'abc123')");
+   mysql_query(connexion, "INSERT INTO employees (pseudo, password) VALUES ('Cyril', 'abc123')");
 
    // Déconnexion de la base de données
    mysql_close(connexion);
