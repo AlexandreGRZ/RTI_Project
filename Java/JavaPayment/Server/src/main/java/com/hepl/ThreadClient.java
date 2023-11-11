@@ -1,38 +1,79 @@
 package com.hepl;
 
 import com.hepl.bridge.DbConnection;
+import com.hepl.protocol.Protocol;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.sql.SQLException;
 
 class ThreadClient extends Thread {
-    private int clientNumber;
-    private int threadIndex;
-    private Socket clientSocket;
-    private CustomThreadPool threadPool;
-    DbConnection connection;
+    private WaitingQ queue;
+    private DbConnection connection;
+    Socket socket;
+    ObjectOutputStream oos;
+    ObjectInputStream ois;
+    Protocol protocol;
 
-    public ThreadClient(int threadIndex, CustomThreadPool threadPool)throws Exception{
-        connection = new DbConnection();
-        this.threadIndex = threadIndex;
-        this.threadPool = threadPool;
+    ThreadClient(WaitingQ queue, Protocol protocol) throws IOException, SQLException {
+//        connection = new DbConnection();
+        this.queue = queue;
+        this.protocol = protocol;
     }
 
-    public synchronized void setClientSocket(Socket clientSocket){
-        this.clientSocket = clientSocket;
-    }
     @Override
     public void run() {
-        while (true){
-            threadPool.setThreadAvailable(threadIndex);
-            try{
-                wait();
+        System.out.println("[" + getName() + "]Thread starts...");
+        while (true) {
+            // Waiting for new client
+            try {
+                System.out.println("[" + getName() + "]Waiting for a new client connection...");
+                socket = queue.getConnection();
             }catch (InterruptedException e){
+                System.out.println("[" + getName() + "]Thread interruption.");
                 return;
             }
-            threadPool.setThreadUnavailable(threadIndex);
+            System.out.println("[" + getName() + "]Handling new client.");
 
+            try {
+                ois = new ObjectInputStream(socket.getInputStream());
+                oos = new ObjectOutputStream(socket.getOutputStream());
 
+                // Interaction with the client
 
+                while (true){
+                    try{
+                        Thread.sleep(200);
+                    }catch (InterruptedException e){
+                        break;
+                    }
+                }
+
+//                while (true){
+//                    Request request = (Request) ois.readObject();
+//                    Response response = protocol.HandleRequest(request, socket);
+//                    oos.write(response);
+//                }
+
+            }
+//            catch (EndConnectionException e){
+//                System.out.println("[" + getName() + "]End of connection with client.");
+//            }
+            catch (IOException e){
+                System.out.println("[" + getName() + "]IOException : "+e.getMessage());
+            }
+//            catch (ClassNotFoundException e){
+//                System.out.println("[" + getName() + "]Invalid request!");
+//            }
+            finally {
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    System.out.println("[" + getName() + "IOException while trying to close socket : "+e.getMessage());
+                }
+            }
         }
     }
 }

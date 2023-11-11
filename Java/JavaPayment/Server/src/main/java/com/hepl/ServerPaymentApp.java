@@ -1,39 +1,43 @@
 package com.hepl;
 
+import java.util.Properties;
+
+// Import pour fonction test DB
+import java.sql.ResultSet;
 import com.hepl.bridge.DbConnection;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.sql.ResultSet;
-import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class ServerPaymentApp {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
+        Properties config = new Properties();
+        config.load(ServerPaymentApp.class.getClassLoader().getResourceAsStream("config.properties"));
+
+        int port = Integer.parseInt(config.getProperty("server.port"));
+        int poolSize = Integer.parseInt(config.getProperty("server.nbrThreads"));
+
+        // Start thread server
+        ThreadServer threadServer = new ThreadServer(port, null, poolSize);// Protocole needs to be added
+        threadServer.start();
+
+        // Wainting system (je suis pas convaincu mais bon)
+        try{
+            threadServer.join();
+        }catch (InterruptedException e){
+            threadServer.interrupt();
+        }
+    }
+
+
+
+    private static void testDBConnection()throws Exception{
         DbConnection connection = new DbConnection();
 
         ResultSet resultSet = connection.executeQuery("SELECT * FROM clients;");
 
-        while(resultSet.next()){
+        while (resultSet.next()) {
             String pseudo = resultSet.getString("pseudo");
             System.out.println(pseudo);
         }
 
         connection.close();
-
-
-        Properties config = new Properties();
-        config.load(ServerPaymentApp.class.getClassLoader().getResourceAsStream("config.properties"));
-        ServerSocket serverSocket;
-        try {
-            serverSocket = new ServerSocket(Integer.getInteger(config.getProperty("server.port")));
-        }
-        catch (IOException e){
-            System.out.println("Error in the threadPool creation :"+e.getMessage());
-            return;
-        }
-
     }
 }
