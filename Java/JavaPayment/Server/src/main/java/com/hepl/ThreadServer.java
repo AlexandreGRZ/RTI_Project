@@ -1,6 +1,6 @@
 package com.hepl;
 
-import com.hepl.protocol.Protocol;
+import com.hepl.protocol.interfaces.Protocol;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -54,10 +54,10 @@ public class ThreadServer extends Thread {
     }
 
     private void ThreadPoolCreation() throws Exception {
-        System.out.println("[THREAD(server)]Creation of a thread pool of "+poolSize+" threads...");
+        System.out.println("[THREAD(server)]Creation of a thread pool of " + poolSize + " threads...");
         try {
             for (int i = 0; i < poolSize; i++)
-                new ThreadClient(queue, null).start();// Protocole needs to be added
+                new ThreadClient(queue, protocol).start();// Protocole needs to be added
         } catch (IOException e) {
             System.out.println("[THREAD(server)]Error in the pool creation");
             throw e;
