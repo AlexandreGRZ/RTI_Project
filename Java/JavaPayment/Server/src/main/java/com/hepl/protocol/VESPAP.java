@@ -29,7 +29,7 @@ public class VESPAP implements Protocol {
         if (request instanceof PayFactureRequest)
             return handlePayFactureRequest((PayFactureRequest) request, connection);
         if (request instanceof LogoutRequest) {
-            handleLogoutRequest((LogoutRequest) request);
+            handleLogoutRequest();
             throw new EndConnectionException(null);
         }
         return null;
@@ -70,7 +70,7 @@ public class VESPAP implements Protocol {
             factures = null;
         }
 
-        if (factures!=null)
+        if (factures != null)
             System.out.println("Get factures successful");
         System.out.println("Get factures failed");
 
@@ -80,6 +80,9 @@ public class VESPAP implements Protocol {
     private synchronized PayFactureResponse handlePayFactureRequest(PayFactureRequest request, DbConnection connection) {
         System.out.println("Pay facture request");
         boolean success;
+
+        if (!checkVisaCard(request.getNumCard()))
+            return new PayFactureResponse(false);
 
         try {
             success = connection.payFacture(request.getIdFacture());
@@ -93,7 +96,27 @@ public class VESPAP implements Protocol {
         return new PayFactureResponse(success);
     }
 
-    private synchronized void handleLogoutRequest(LogoutRequest request) throws EndConnectionException {
+    public static boolean checkVisaCard(String number) {
+        int sum = 0;
+        boolean oddNumber = true;
+        int tmp;
+
+        for (int i = number.length() - 1; i >= 0; i--) {
+            if (oddNumber) {
+                sum += (int) number.charAt(i) - '0';
+            } else {
+                tmp = (int) number.charAt(i) - '0';
+                tmp *= 2;
+                if (tmp >= 10)
+                    tmp = (tmp / 10) + (tmp % 10);
+                sum += tmp;
+            }
+            oddNumber = !oddNumber;
+        }
+        return (sum % 10) == 0;
+    }
+
+    private synchronized void handleLogoutRequest() throws EndConnectionException {
         System.out.println("Logout request");
         throw new EndConnectionException(null);
     }

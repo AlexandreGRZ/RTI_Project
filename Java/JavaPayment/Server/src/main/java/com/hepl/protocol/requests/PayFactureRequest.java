@@ -4,9 +4,9 @@ import com.hepl.protocol.interfaces.Request;
 
 public class PayFactureRequest implements Request {
     private int idFacture;
-    private long numCard;
+    private String numCard;
 
-    public PayFactureRequest(int idFacture, long numCard) {
+    public PayFactureRequest(int idFacture, String numCard) {
         this.idFacture = idFacture;
         this.numCard = numCard;
     }
@@ -15,7 +15,7 @@ public class PayFactureRequest implements Request {
         return idFacture;
     }
 
-    public long getNumCard() {
+    public String getNumCard() {
         return numCard;
     }
 }

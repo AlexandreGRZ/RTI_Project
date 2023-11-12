@@ -1,6 +1,6 @@
 import java.net.Socket;
 
-public class clientTestApp {
+public class ClientTestApp {
     public static void main(String[] args) throws Exception {
         Socket[] socket = new Socket[10];
 

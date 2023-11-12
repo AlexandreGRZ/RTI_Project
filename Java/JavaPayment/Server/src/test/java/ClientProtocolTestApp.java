@@ -5,7 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class clientProtocolTestApp {
+public class ClientProtocolTestApp {
     public static void main(String[] args) throws Exception {
         System.out.println("Socket creation");
         Socket socket = new Socket("127.0.0.1", 8080);
