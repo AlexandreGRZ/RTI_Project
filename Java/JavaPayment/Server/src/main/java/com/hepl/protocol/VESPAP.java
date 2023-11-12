@@ -61,6 +61,7 @@ public class VESPAP implements Protocol {
     }
 
     private synchronized GetFacturesResponse handleGetFacturesRequest(GetFacturesRequest request, DbConnection connection) {
+        System.out.println("Get facture request");
         ArrayList<Facture> factures;
 
         try {
@@ -69,22 +70,31 @@ public class VESPAP implements Protocol {
             factures = null;
         }
 
+        if (factures!=null)
+            System.out.println("Get factures successful");
+        System.out.println("Get factures failed");
+
         return new GetFacturesResponse(factures);
     }
 
     private synchronized PayFactureResponse handlePayFactureRequest(PayFactureRequest request, DbConnection connection) {
+        System.out.println("Pay facture request");
         boolean success;
 
         try {
             success = connection.payFacture(request.getIdFacture());
         } catch (SQLException e) {
+            System.out.println("Payment request failed");
             success = false;
         }
 
+        if (success)
+            System.out.println("Payment request successful");
         return new PayFactureResponse(success);
     }
 
     private synchronized void handleLogoutRequest(LogoutRequest request) throws EndConnectionException {
+        System.out.println("Logout request");
         throw new EndConnectionException(null);
     }
 }

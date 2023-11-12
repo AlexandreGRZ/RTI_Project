@@ -21,7 +21,6 @@ class ThreadClient extends Thread {
     Protocol protocol;
 
     ThreadClient(WaitingQ queue, Protocol protocol) throws IOException, SQLException {
-        connection = new DbConnection();
         this.queue = queue;
         this.protocol = protocol;
     }
@@ -29,6 +28,15 @@ class ThreadClient extends Thread {
     @Override
     public void run() {
         System.out.println("[" + getName() + "]Thread starts...");
+
+        System.out.println("[" + getName() + "]Connection to db...");
+        try{
+
+            connection = new DbConnection();
+        }catch (SQLException | IOException e){
+            System.out.println("[" + getName() + "]DB connection failed. Thread interruption.");
+            return;
+        }
         while (true) {
             // Waiting for new client
             try {
@@ -41,13 +49,18 @@ class ThreadClient extends Thread {
             System.out.println("[" + getName() + "]Handling new client.");
 
             try {
+                System.out.println("input");
                 ois = new ObjectInputStream(socket.getInputStream());
+                System.out.println("output");
                 oos = new ObjectOutputStream(socket.getOutputStream());
 
                 // Interaction with the client
                 while (true){
+                    System.out.println("Waiting for request...");
                     Request request = (Request) ois.readObject();
+                    System.out.println("Request received.");
                     Response response = protocol.handleRequest(request, connection);
+                    System.out.println("Sending response...");
                     oos.writeObject(response);
                 }
             }

@@ -30,4 +30,14 @@ public class Facture {
     public int getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "Facture{" +
+                "id=" + id +
+                ", date=" + date +
+                ", amount=" + amount +
+                ", payed=" + payed +
+                '}';
+    }
 }
