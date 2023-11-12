@@ -7,13 +7,19 @@ import java.net.Socket;
 
 public class clientProtocolTestApp {
     public static void main(String[] args) throws Exception {
+        System.out.println("Socket creation");
         Socket socket = new Socket("127.0.0.1", 8080);
-        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+        System.out.println("Getting output stream");
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+        System.out.println("Getting input stream");
+        ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
 
 
-        LoginRequest loginRequest = new LoginRequest("cyril", "abc123");
+        System.out.println("login request creation");
+        LoginRequest loginRequest = new LoginRequest("Cyril", "abc123");
+        System.out.println("Sending request");
         objectOutputStream.writeObject(loginRequest);
+        System.out.println("Waiting reponse...");
         LoginResponse loginResponse = (LoginResponse) objectInputStream.readObject();
         System.out.println("login status : " + loginResponse.isSuccess());
 
@@ -24,11 +30,15 @@ public class clientProtocolTestApp {
             return;
         }
 
+        System.out.println("Sending logout request");
         LogoutRequest logoutRequest = new LogoutRequest();
         objectOutputStream.writeObject(logoutRequest);
         objectOutputStream.flush();
+
+        Thread.sleep(1000);
         objectOutputStream.close();
         objectInputStream.close();
         socket.close();
+        System.out.println("Closing client");
     }
 }

@@ -18,7 +18,7 @@ public class DbConnection {
     }
 
     public synchronized boolean login(String login, String password) throws SQLException {
-        String query = "SELECT * FROM Employees WHERE login=? AND password=?;";
+        String query = "SELECT * FROM employees WHERE pseudo=? AND password=?;";
         PreparedStatement statement = connection.prepareStatement(query);
         // oui, les indices commencent à 1, pourquoi faire comme tout le monde
         // quand on peut mettre un peu de piquant dans notre vie et risquer des seg faults

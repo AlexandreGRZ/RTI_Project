@@ -1,6 +1,8 @@
 package com.hepl.protocol.requests;
 
-public class LogoutRequest {
+import com.hepl.protocol.interfaces.Request;
+
+public class LogoutRequest implements Request {
     public LogoutRequest() {
     }
 }

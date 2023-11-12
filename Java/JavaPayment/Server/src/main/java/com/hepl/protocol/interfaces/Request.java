@@ -1,4 +1,6 @@
 package com.hepl.protocol.interfaces;
 
-public interface Request {
+import java.io.Serializable;
+
+public interface Request extends Serializable {
 }

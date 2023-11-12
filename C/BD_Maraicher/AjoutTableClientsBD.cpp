@@ -43,8 +43,8 @@ int main()
    mysql_query(connexion, "INSERT INTO clients (pseudo, password) VALUES ('Alex', 'abc123')");
    mysql_query(connexion, "INSERT INTO clients (pseudo, password) VALUES ('Cyril', 'abc123')");
    printf("Insertions de 2 employees de test\n");
-   mysql_query(connexion, "INSERT INTO employees (pseudo, password) VALUES ('Alex', 'abc123')");
-   mysql_query(connexion, "INSERT INTO employees (pseudo, password) VALUES ('Cyril', 'abc123')");
+      mysql_query(connexion, "INSERT INTO employees (pseudo, password) VALUES ('Alex', 'abc123')");
+      mysql_query(connexion, "INSERT INTO employees (pseudo, password) VALUES ('Cyril', 'abc123')");
 
    // Déconnexion de la base de données
    mysql_close(connexion);
