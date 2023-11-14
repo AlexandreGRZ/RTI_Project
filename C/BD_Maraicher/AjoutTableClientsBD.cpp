@@ -9,7 +9,7 @@ int main()
    // Connexion à MySQL
    printf("Connexion à la BD...\n");
    MYSQL *connexion = mysql_init(NULL);
-   mysql_real_connect(connexion, "localhost", "Student", "PassStudent1_", "PourStudent", 0, NULL, 0);
+   mysql_real_connect(connexion, "localhost", "Student", "Papyrusse0021", "PourStudent", 0, NULL, 0);
 
    // Vérification de la connexion
    if (connexion == NULL)

@@ -16,11 +16,11 @@
          <TextField fx:id="TextFieldLogin" HBox.hgrow="ALWAYS" />
          <Label layoutX="10.0" layoutY="10.0" text="Mot de passe :" />
          <TextField fx:id="TextFieldPassword" layoutX="38.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
-         <Button mnemonicParsing="false" onAction="#onLoginClick" prefWidth="75.0" text="Login">
+         <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#onLoginClick" prefWidth="75.0" text="Login">
             <cursor>
                <Cursor fx:constant="HAND" />
             </cursor></Button>
-         <Button disable="true" layoutX="356.0" layoutY="14.0" mnemonicParsing="false" onAction="#onLogoutClick" prefWidth="75.0" text="Logout">
+         <Button fx:id="btnLogout" disable="true" layoutX="356.0" layoutY="14.0" mnemonicParsing="false" onAction="#onLogoutClick" prefWidth="75.0" text="Logout">
             <cursor>
                <Cursor fx:constant="HAND" />
             </cursor></Button>
@@ -77,6 +77,9 @@
                         <cursor>
                            <Cursor fx:constant="HAND" />
                         </cursor>
+                        <valueFactory>
+                           <SpinnerValueFactory.IntegerSpinnerValueFactory min="1" max="100" initialValue="1" />
+                        </valueFactory>
                         <GridPane.margin>
                            <Insets left="10.0" />
                         </GridPane.margin>
@@ -91,13 +94,13 @@
                   <children>
                      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0" VBox.vgrow="ALWAYS">
                         <children>
-                           <Button alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onPreviousClick" prefHeight="50.0" prefWidth="50.0" text="&lt;&lt;&lt;" HBox.hgrow="ALWAYS" />
-                           <Button alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onNextClick" prefHeight="50.0" prefWidth="50.0" text="&gt;&gt;&gt;" HBox.hgrow="ALWAYS" />
+                           <Button fx:id="btnPreviousElement" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onPreviousClick" prefHeight="50.0" prefWidth="50.0" text="&lt;&lt;&lt;" HBox.hgrow="ALWAYS" />
+                           <Button fx:id="btnNextElement" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onNextClick" prefHeight="50.0" prefWidth="50.0" text="&gt;&gt;&gt;" HBox.hgrow="ALWAYS" />
                         </children>
                      </HBox>
                      <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                         <children>
-                           <Button alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onBuyClick" prefWidth="75.0" text="Acheter" />
+                           <Button fx:id="btnBuy" alignment="CENTER" disable="true" mnemonicParsing="false" onAction="#onBuyClick" prefWidth="75.0" text="Acheter" />
                         </children>
                         <padding>
                            <Insets bottom="14.0" />
@@ -127,15 +130,15 @@
                      </TableView>
                      <VBox alignment="TOP_CENTER" minWidth="120.0" prefHeight="200.0" prefWidth="100.0">
                         <children>
-                           <Button disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onDeleteArticleClick" text="Supprimer article">
+                           <Button fx:id="btnDeleteArticles" disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onDeleteArticleClick" text="Supprimer article">
                               <VBox.margin>
                                  <Insets top="20.0" />
                               </VBox.margin></Button>
-                           <Button disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onEmptyCartClick" text="Vider le panier">
+                           <Button fx:id="btnEmptyCaddie" disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onEmptyCartClick" text="Vider le panier">
                               <VBox.margin>
                                  <Insets top="10.0" />
                               </VBox.margin></Button>
-                           <Button disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onConfirmClick" text="Confirmer achat">
+                           <Button fx:id="btnConfirmBuy" disable="true" minWidth="110.0" mnemonicParsing="false" onAction="#onConfirmClick" text="Confirmer achat">
                               <VBox.margin>
                                  <Insets top="105.0" />
                               </VBox.margin></Button>

@@ -17,7 +17,7 @@ void retire(int socket);
 
 pthread_mutex_t mutexClients = PTHREAD_MUTEX_INITIALIZER;
 
-bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *CheckLogin, ARTICLEINPANNIER *pCaddie)
+bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, int *idUtilisateur, ARTICLEINPANNIER *pCaddie)
 {
     // Skip char taille trame quand envoyé depuis client java
     if (strlen(requete) == (int)requete[0] - 1)
@@ -27,10 +27,8 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
 
     if (strcmp(ptr, "LOGIN") == 0)
     {
-        printf("%d\n\n\n", *CheckLogin);
         if (estPresent(socket) >= 0)
         {
-
             sprintf(reponse, "LOGIN#ALREADY");
             return true;
         }
@@ -39,12 +37,10 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
             char *Login = strtok(NULL, "#");
             char *Password = strtok(NULL, "#");
             bool newUser = atoi(strtok(NULL, "#"));
-            if (SMOP_Login(MysqlBase, Login, Password, newUser))
+            if (SMOP_Login(MysqlBase, idUtilisateur,Login, Password, newUser))
             {
                 sprintf(reponse, "LOGIN#%s#%s#OK", Login, Password);
-                *CheckLogin = true;
                 ajoute(socket);
-                printf("%d\n\n\n", *CheckLogin);
                 return true;
             }
             else
@@ -198,9 +194,24 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
         }
     }
 
-    if (strcmp(ptr, "CONFIRMER") == 0)
+    if (strcmp(ptr, "CONFIRM") == 0)
     {
-        sprintf(reponse, "CONFIRMER#OK");
+        float MontantAPayer = 0.0;
+        while (pCaddie->id != -1)
+        {
+            printf("interne Boucle\n");
+            MontantAPayer += pCaddie->prix;
+            pCaddie++;
+        }
+
+        if(SMOP_Confirm(MysqlBase, idUtilisateur, MontantAPayer))
+        {
+            sprintf(reponse, "CONFIRM#OK");
+        }
+        else
+        {
+            sprintf(reponse, "CONFIRM#ERR");
+        }
     }
 
     if (strcmp(ptr, "LOGOUT") == 0)
@@ -208,7 +219,6 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
         printf("\t[THREAD %p] LOGOUT\n", pthread_self());
         cancelAll(MysqlBase, pCaddie);
         retire(socket);
-        *CheckLogin = false;
         sprintf(reponse, "LOGOUT#OK");
         return true;
     }
@@ -216,10 +226,9 @@ bool SMOP(MYSQL *MysqlBase, char *requete, char *reponse, int socket, bool *Chec
     return true;
 }
 
-bool SMOP_Login(MYSQL *MysqlBase, const char *user, const char *password, bool newUser)
+bool SMOP_Login(MYSQL *MysqlBase,int * idUtilisateur, const char *user, const char *password, bool newUser)
 {
-
-    return UserConnexion(MysqlBase, user, password, newUser);
+    return UserConnexion(MysqlBase, idUtilisateur, user, password, newUser);
 }
 
 bool SMOP_Consult(MYSQL *MysqlBase, int idAliment, char *pCReponse)
@@ -244,6 +253,9 @@ bool cancelAll(MYSQL *MysqlBase, ARTICLEINPANNIER *pCaddie)
     return check;
 }
 
+bool SMOP_Confirm(MYSQL *MysqlBase, int * idUtilisateur, float MontantAPayer){
+    return UserConfirm(MysqlBase, *idUtilisateur, MontantAPayer);
+}
 int estPresent(int socket)
 {
     int indice = -1;

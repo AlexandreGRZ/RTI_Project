@@ -1,10 +1,14 @@
 package com.hepl.purchaseclient.model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 
 public class Model {
     private ArrayList<Article> cart;
     private Article currentArticle;
+    private ObservableList<Article> observableListOfArticles;
     private static Model instance;
 
     // Singleton instance getter----------------------------------------------------------------------------------------
@@ -37,5 +41,21 @@ public class Model {
 
     public ArrayList<Article> getCart(){
         return cart;
+    }
+
+    public ObservableList<Article> getObservableListOfArticles() {
+        return observableListOfArticles;
+    }
+
+    public void setObservableListOfArticles(ObservableList<Article> observableListOfArticles) {
+        this.observableListOfArticles = observableListOfArticles;
+    }
+
+    public void TransformArrayListToObservableList(){
+        setObservableListOfArticles(FXCollections.observableArrayList());
+        for (Article a : getCart())
+        {
+            getObservableListOfArticles().add(a);
+        }
     }
 }

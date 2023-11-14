@@ -18,7 +18,7 @@ MYSQL *ConnexionBD()
 {
     MYSQL *MysqlBase = mysql_init(NULL);
 
-    if (mysql_real_connect(MysqlBase, "localhost", "Student", "PassStudent1_", "PourStudent", 0, 0, 0) == NULL)
+    if (mysql_real_connect(MysqlBase, "localhost", "Student", "Papyrusse0021", "PourStudent", 0, 0, 0) == NULL)
     {
         fprintf(stderr, "(ACCESBD) Erreur de connexion à la base de données...\n");
         exit(1);
@@ -27,7 +27,7 @@ MYSQL *ConnexionBD()
     return MysqlBase;
 }
 
-bool UserConnexion(MYSQL *ConnexionBD, const char *Login, const char *Password, bool newUser)
+bool UserConnexion(MYSQL *ConnexionBD,int * idUtilisateur, const char *Login, const char *Password, bool newUser)
 {
     char query[255];
     MYSQL_RES *res;
@@ -49,8 +49,9 @@ bool UserConnexion(MYSQL *ConnexionBD, const char *Login, const char *Password, 
 
         if ((row = mysql_fetch_row(res))) // Client trouvé dans la BD
         {
-            printf("Pseudo : %s, Password : %s\n", row[0], row[1]);
-            if (strcmp(row[1], Password) == 0)
+            *idUtilisateur = atoi(row[0]);
+            printf("Pseudo : %s, Password : %s\n", row[1], row[2]);
+            if (strcmp(row[2], Password) == 0)
             {
                 printf("Le mots de passe correspond \n");
                 mysql_free_result(res);
@@ -75,7 +76,7 @@ bool UserConnexion(MYSQL *ConnexionBD, const char *Login, const char *Password, 
             }
 
             // Création de la requête préparée, insertion du pseudo et mdp dans la table clients
-            strcpy(query, "INSERT INTO clients (NULL, pseudo, password) VALUES (?, ?)");
+                strcpy(query, "INSERT INTO clients (NULL, pseudo, password) VALUES (?, ?)");
             if (mysql_stmt_prepare(stmt, query, strlen(query)) != 0)
             {
                 fprintf(stderr, "mysql_stmt_prepare() failed\n");
@@ -261,4 +262,24 @@ bool UserCancel(MYSQL *ConnexionBD, int idAliment, int IQuantite)
         }
     }
     return false;
+}
+
+bool UserConfirm(MYSQL *ConnexionBD, int idUtilisateur, float MontantAPayer){
+
+
+       char query[255];
+       MYSQL_RES *res;
+       MYSQL_ROW row;
+
+       snprintf(query, sizeof(query), "INSERT INTO factures (idClient, `DATE`, montant, paye) VALUES (%d, NOW(), %f, false)", idUtilisateur, MontantAPayer);
+
+       if (mysql_query(ConnexionBD, query))
+       {
+           printf("Erreur lors de l'execution de la requete : %s\n", mysql_error(ConnexionBD));
+           return false;
+       }
+       else{
+           return true;
+       }
+
 }

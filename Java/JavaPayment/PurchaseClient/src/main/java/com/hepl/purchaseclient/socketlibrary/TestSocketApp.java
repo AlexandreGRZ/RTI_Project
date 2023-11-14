@@ -4,7 +4,7 @@ public class TestSocketApp {
     private static ClientSocket clientSocket;
 
     public static void main(String[] args) throws Exception {
-        clientSocket = new ClientSocket("192.168.1.218", 50000);
+        clientSocket = new ClientSocket("127.0.0.1", 50000);
 
         request("LOGIN#Alex#abc123#0");
 

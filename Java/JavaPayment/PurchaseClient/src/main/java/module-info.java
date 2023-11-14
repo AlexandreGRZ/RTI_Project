@@ -4,5 +4,7 @@ module com.hepl.purchaseclient {
 
 
     opens com.hepl.purchaseclient to javafx.fxml;
+    opens com.hepl.purchaseclient.model to javafx.base;
+
     exports com.hepl.purchaseclient;
 }
