@@ -129,7 +129,7 @@ void *FctThreadClient(void *p)
 void TraitementConnexion(int sService)
 {
    char requete[1000], reponse[1000], CTempon[200], CaddieReponse[1000];
-   int nbLus, nbEcrits, nbarticle;
+   int nbLus, nbEcrits, nbarticle, idUtilisateur;
    bool onContinue = true;
    bool CheckLogin = false;
    ARTICLEINPANNIER Caddie[10];
@@ -165,8 +165,9 @@ void TraitementConnexion(int sService)
       printf("\t[THREAD %p] Requete recue = %s\n", pthread_self(), requete);
 
       pthread_mutex_lock(&mutexBDAcces);
-      onContinue = SMOP(MysqlBase, requete, reponse, sService, &CheckLogin, &Caddie[0]);
+      onContinue = SMOP(MysqlBase, requete, reponse, sService, &idUtilisateur, &Caddie[0]);
       pthread_mutex_unlock(&mutexBDAcces);
+      printf("%d\n", idUtilisateur);
 
       if ((nbEcrits = Send(sService, reponse, strlen(reponse))) < 0)
       {
