@@ -1,8 +1,9 @@
 package com.hepl.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Facture {
+public class Facture implements Serializable {
     private int id;
     private Date date;
     private float amount;

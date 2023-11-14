@@ -72,7 +72,6 @@ public class VESPAP implements Protocol {
 
         if (factures != null)
             System.out.println("Get factures successful");
-        System.out.println("Get factures failed");
 
         return new GetFacturesResponse(factures);
     }
