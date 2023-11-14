@@ -30,7 +30,7 @@ public class DbConnection {
     }
 
     public synchronized ArrayList<Facture> getFactures(int idClient) throws SQLException {
-        String query = "SELECT * FROM Factures WHERE idClient=?;";
+        String query = "SELECT * FROM factures WHERE idClient=?;";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, idClient);
         ResultSet resultSet = statement.executeQuery();
@@ -49,7 +49,7 @@ public class DbConnection {
     }
 
     public synchronized boolean payFacture(int idFacture) throws SQLException {
-        String query = "UPDATE Factures SET payé=True WHERE id=?;";
+        String query = "UPDATE factures SET paye=True WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(query);
         statement.setInt(1, idFacture);
 
