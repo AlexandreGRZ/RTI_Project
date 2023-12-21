@@ -7,18 +7,20 @@
     <script src="../js/app.js"></script>
 </head>
 <body>
-<h1>Gestionnaire de stock</h1>
-<div class="table-wrapper">
-    <table class="fl-table" id="tabletest">
-        <thead>
+
+<div>
+    <h1>Gestionnaire de stock</h1>
+    <div class="table-wrapper">
+        <table class="fl-table" id="tabletest">
+            <thead>
             <tr>
                 <th>Id</th>
                 <th>Article</th>
                 <th>Prix à l'unité</th>
                 <th>Quantité</th>
             </tr>
-        </thead>
-        <tbody id="body">
+            </thead>
+            <tbody id="body">
             <tr>
                 <td>1</td>
                 <td>Content 1</td>
@@ -55,22 +57,23 @@
                 <td>Content 6</td>
                 <td>Content 6</td>
             </tr>
-        <tbody>
-    </table>
+            <tbody>
+        </table>
+    </div>
 </div>
-<div>
+<div id="formulaire">
     <h4>Article sélectionné :</h4>
-    <label for="idInput">id =</label>
-    <input type="text" name="id" id="idInput">
+    <label for="idArticle">id =</label>
+    <span id="idArticle"></span>
     <br>
-    <label for="ArticleInput">Article =</label>
-    <input type="text" name="article" id="ArticleInput">
+    <label for="nomArticle">Article =</label>
+    <span id="nomArticle"></span>
     <br>
     <label for="prixInput">Prix à l'unité =</label>
-    <input type="text" name="prix" id="prixInput">
+    <input type="number" name="prix" id="prixInput">
     <br>
     <label for="stockInput">Quantité =</label>
-    <input type="text" name="stock" id="stockInput">
+    <input type="number" name="stock" id="stockInput">
     <br>
     <button id="updateButton">Mettre à jour</button>
 </div>

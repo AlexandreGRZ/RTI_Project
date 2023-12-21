@@ -10,45 +10,43 @@ import java.nio.file.Files;
 
 public class HandlerHtml implements HttpHandler {
 
-    private final String RESOURCES_PATH = System.getProperty("user.dir")+"\\ServerHttp\\src\\main\\resources";
+    private final String RESOURCES_PATH = System.getProperty("user.dir") + "\\ServerHttp\\src\\main\\resources";
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String uriPath = exchange.getRequestURI().getPath();
 
-        if(uriPath.equals("/"))
+        if (uriPath.equals("/"))
             uriPath = "index.html";
 
-        if(uriPath.endsWith(".html")){
-            File file = new File(RESOURCES_PATH+"\\html\\index.html");
+        if (uriPath.endsWith(".html")) {
+            File file = new File(RESOURCES_PATH + "\\html\\index.html");
             exchange.sendResponseHeaders(200, file.length());
             exchange.getResponseHeaders().set("Content-Type", "text/html");
             OutputStream os = exchange.getResponseBody();
             Files.copy(file.toPath(), os);
             os.close();
             System.out.println("Envoi page html");
-        }
-        else if(uriPath.endsWith(".css")){
-            File file = new File(RESOURCES_PATH+"\\css\\style.css");
+        } else if (uriPath.endsWith(".css")) {
+            File file = new File(RESOURCES_PATH + "\\css\\style.css");
             exchange.sendResponseHeaders(200, file.length());
             exchange.getResponseHeaders().set("Content-Type", "text/css");
             OutputStream os = exchange.getResponseBody();
             Files.copy(file.toPath(), os);
             os.close();
             System.out.println("Envoi page css");
-        }
-        else if(uriPath.endsWith(".js")){
-            File file = new File(RESOURCES_PATH+"\\js\\app.js");
+        } else if (uriPath.endsWith(".js")) {
+            File file = new File(RESOURCES_PATH + "\\js\\app.js");
             exchange.sendResponseHeaders(200, file.length());
             exchange.getResponseHeaders().set("Content-Type", "text/jss");
             OutputStream os = exchange.getResponseBody();
             Files.copy(file.toPath(), os);
             os.close();
             System.out.println("Envoi page js");
-        }else Erreur404(exchange);
+        } else Erreur404(exchange);
     }
 
-    private void Erreur404(HttpExchange exchange)throws IOException {
+    private void Erreur404(HttpExchange exchange) throws IOException {
         String reponse = "fichier introuvable";
         exchange.sendResponseHeaders(404, reponse.length());
         exchange.getResponseHeaders().set("Content-Type", "text/plain");

@@ -1,6 +1,5 @@
 package com.hepl.serverhttp;
 
-import com.hepl.serverhttp.db.DbConnection;
 import com.hepl.serverhttp.handlers.API;
 import com.hepl.serverhttp.handlers.HandlerHtml;
 import com.sun.net.httpserver.HttpServer;
@@ -19,6 +18,7 @@ public class ServerApp {
             server.createContext("/index.html", new HandlerHtml());
 
             server.createContext("/getArticle", new API());
+            server.createContext("/update", new API());
 
             System.out.println("Démarrage serveur...");
             server.start();

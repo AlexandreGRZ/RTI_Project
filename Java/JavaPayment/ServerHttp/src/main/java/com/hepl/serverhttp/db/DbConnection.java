@@ -1,7 +1,6 @@
 package com.hepl.serverhttp.db;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hepl.serverhttp.db.Article;
 
 import java.io.IOException;
 import java.sql.*;
@@ -40,6 +39,16 @@ public class DbConnection {
         }
 
         return articlesJSON;
+    }
+
+    public boolean update(int id, float price, int quantity) throws SQLException{
+        String query = "UPDATE articles SET prix=?, stock=? WHERE id=?;";
+        PreparedStatement statement = connection.prepareStatement(query);
+        statement.setFloat(1, price);
+        statement.setInt(2, quantity);
+        statement.setInt(3, id);
+
+        return statement.executeUpdate() > 0;
     }
 
     public synchronized void close() throws SQLException {
