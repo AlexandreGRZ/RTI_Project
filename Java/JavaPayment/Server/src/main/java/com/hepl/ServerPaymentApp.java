@@ -16,7 +16,7 @@ public class ServerPaymentApp {
         ThreadServer threadServer = new ThreadServer(port, new VESPAP(), poolSize);// Protocole needs to be added
         threadServer.start();
 
-        // Waiting system (je ne suis pas convaincu mais bon)
+        // Waiting system
         try {
             threadServer.join();
         } catch (InterruptedException e) {

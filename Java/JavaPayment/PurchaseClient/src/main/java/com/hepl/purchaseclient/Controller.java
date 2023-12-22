@@ -66,9 +66,8 @@ public class Controller {
 
         model = Model.getInstance();
 
-        clientSocket = new ClientSocket("127.0.0.1", 50000);
+        clientSocket = new ClientSocket("10.59.22.14", 50000);
         setIdElement(1);
-
     }
 
     // Button click handlers--------------------------------------------------------------------------------------------
