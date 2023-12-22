@@ -1,5 +1,6 @@
 package com.hepl.bridge;
 
+import com.hepl.model.DateCustom;
 import com.hepl.model.Facture;
 
 import java.io.IOException;
@@ -41,9 +42,10 @@ public class DbConnection {
             int idFacture = resultSet.getInt("id");
             Date date = resultSet.getDate("date");
             float amount = resultSet.getFloat("montant");
-            boolean payed = resultSet.getBoolean("payé");
+            boolean payed = resultSet.getBoolean("paye");
             factures.add(new Facture(idFacture, date, amount, payed));
         }
+        System.out.println(factures);
 
         return factures;
     }

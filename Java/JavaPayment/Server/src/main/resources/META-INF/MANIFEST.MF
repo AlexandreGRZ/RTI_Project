@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: com.hepl.ServerPaymentApp
+Class-Path: protobuf-java-3.21.9.jar mysql-connector-j-8.2.0.jar
+

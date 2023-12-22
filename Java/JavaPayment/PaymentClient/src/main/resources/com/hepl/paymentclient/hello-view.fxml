@@ -1,16 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.hepl.paymentclient.HelloController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
+<VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="620.0" prefWidth="780.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.hepl.paymentclient.PayementController">
+  <padding>
+    <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
+  </padding>
+  <HBox alignment="CENTER" prefHeight="50.0" prefWidth="400.0" spacing="5.0" VBox.vgrow="NEVER">
+    <children>
+      <Label text="Nom :" />
+      <TextField fx:id="TextFieldLogin" HBox.hgrow="ALWAYS" />
+      <Label layoutX="10.0" layoutY="10.0" text="Mot de passe :" />
+      <TextField fx:id="TextFieldPassword" layoutX="38.0" layoutY="10.0" HBox.hgrow="ALWAYS" />
+      <Button fx:id="btnLogin" mnemonicParsing="false" onAction="#onLoginClick" prefWidth="75.0" text="Login">
+        <cursor>
+          <Cursor fx:constant="HAND" />
+        </cursor></Button>
+      <Button fx:id="btnLogout" disable="true" layoutX="356.0" layoutY="14.0" mnemonicParsing="false" onAction="#onLogoutClick" prefWidth="75.0" text="Logout">
+        <cursor>
+          <Cursor fx:constant="HAND" />
+        </cursor></Button>
+    </children>
+  </HBox>
+   <Separator prefWidth="200.0" />
+   <HBox alignment="CENTER_LEFT" prefHeight="20.0" prefWidth="760.0">
+      <children>
+         <Label text="RECHERCHER LE CLIENT :">
+            <font>
+               <Font size="16.0" />
+            </font>
+         </Label>
+         <Label text="ID CLIENT ">
+            <font>
+               <Font size="14.0" />
+            </font>
+            <HBox.margin>
+               <Insets left="20.0" />
+            </HBox.margin>
+         </Label>
+         <TextField fx:id="TxtFieldIdClient" prefHeight="25.0" prefWidth="37.0">
+            <HBox.margin>
+               <Insets left="20.0" right="30.0" />
+            </HBox.margin>
+         </TextField>
+         <Button fx:id="btnRechercher" disable="true" mnemonicParsing="false" onAction="#onActionRechercherBtn" text="RECHERCHER" />
+      </children>
+   </HBox>
+   <VBox prefHeight="200.0" prefWidth="100.0" VBox.vgrow="ALWAYS">
+      <children>
+         <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+            <children>
+               <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                  <children>
+                     <TableView fx:id="TVFacture" prefHeight="548.0" prefWidth="380.0">
+                       <columns>
+                         <TableColumn fx:id="TCNom" prefWidth="146.0" text="ID" />
+                         <TableColumn fx:id="TCMontantAPayer" minWidth="0.0" prefWidth="192.0" text="Date" />
+                           <TableColumn fx:id="TCDate" minWidth="0.0" prefWidth="149.0" text="Montant" />
+                           <TableColumn fx:id="TCpaye" prefWidth="79.0" text="Paye" />
+                       </columns>
+                     </TableView>
+                  </children>
+               </VBox>
+               <VBox alignment="CENTER" prefHeight="497.0" prefWidth="193.0">
+                  <children>
+                     <Button fx:id="btnPayer" disable="true" mnemonicParsing="false" onAction="#onActionPayerBtn" text="PAYER">
+                        <padding>
+                           <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
+                        </padding>
+                     </Button>
+                  </children>
+               </VBox>
+            </children>
+         </HBox>
+      </children>
+   </VBox>
 </VBox>
