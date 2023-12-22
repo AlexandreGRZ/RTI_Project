@@ -3,6 +3,7 @@ var currentArticle = {
    name: "",
    price: 0,
    quantity: 0,
+   imageUrl:""
 };
 
 var listArticle = [];
@@ -55,6 +56,7 @@ function tableUpdate(articles) {
          document.getElementById("nomArticle").innerHTML = currentArticle.name;
          document.getElementById("prixInput").value = currentArticle.price;
          document.getElementById("stockInput").value = currentArticle.quantity;
+         document.getElementById("imageArticle").src = currentArticle.imageUrl;
       };
    });
 }

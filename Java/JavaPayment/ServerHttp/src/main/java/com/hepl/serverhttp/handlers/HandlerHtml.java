@@ -16,6 +16,8 @@ public class HandlerHtml implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         String uriPath = exchange.getRequestURI().getPath();
 
+        System.out.println(uriPath);
+
         if (uriPath.equals("/"))
             uriPath = "index.html";
 
@@ -43,7 +45,16 @@ public class HandlerHtml implements HttpHandler {
             Files.copy(file.toPath(), os);
             os.close();
             System.out.println("Envoi page js");
-        } else Erreur404(exchange);
+        }else if (uriPath.endsWith(".jpg")) {
+            System.out.println("requête jpg");
+            File file = new File(RESOURCES_PATH + "\\images"+uriPath.replace("/", "\\"));
+            exchange.sendResponseHeaders(200, file.length());
+            exchange.getResponseHeaders().set("Content-Type", "image/jpeg");
+            OutputStream os = exchange.getResponseBody();
+            Files.copy(file.toPath(), os);
+            os.close();
+            System.out.println("Envoi image");
+        }  else Erreur404(exchange);
     }
 
     private void Erreur404(HttpExchange exchange) throws IOException {
