@@ -50,6 +50,26 @@ public class DbConnection {
         return factures;
     }
 
+    public synchronized String getMotsDePasse(String login ) throws SQLException {
+        String query = "SELECT password FROM clients WHERE id = (SELECT id FROM clients WHERE pseudo = ?);";
+
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, login);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    // Récupérez le mot de passe depuis le résultat
+                    String motDePasse = resultSet.getString("password");
+                    return motDePasse;
+                } else {
+                    // Aucun résultat trouvé, vous pouvez gérer cela en conséquence
+                    return null;
+                }
+            }
+        }
+    }
+
+
     public synchronized boolean payFacture(int idFacture) throws SQLException {
         String query = "UPDATE factures SET paye=True WHERE id=?;";
         PreparedStatement statement = connection.prepareStatement(query);
