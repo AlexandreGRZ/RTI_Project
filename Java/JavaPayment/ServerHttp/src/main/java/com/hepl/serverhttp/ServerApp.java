@@ -13,9 +13,9 @@ public class ServerApp {
 
         try {
             server = HttpServer.create(new InetSocketAddress(8080), 0);
-            server.createContext("/", new HandlerHtml());
-            server.createContext("/index", new HandlerHtml());
-            server.createContext("/index.html", new HandlerHtml());
+            server.createContext("/", new HandlerHtml(false));
+            server.createContext("/index", new HandlerHtml(false));
+            server.createContext("/index.html", new HandlerHtml(false));
 
             server.createContext("/getArticle", new API());
             server.createContext("/update", new API());

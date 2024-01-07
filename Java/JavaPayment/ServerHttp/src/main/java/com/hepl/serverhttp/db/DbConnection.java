@@ -14,7 +14,7 @@ public class DbConnection {
     public DbConnection() throws SQLException, IOException {
         Properties config = new Properties();
         config.load(getClass().getClassLoader().getResourceAsStream(CONFIG_FILENAME));
-        connection = DriverManager.getConnection(config.getProperty("db.url"), config.getProperty("db.user"), config.getProperty("db.password"));
+        connection = DriverManager.getConnection(config.getProperty("db.url"), config.getProperty("db.user"), "");
     }
 
     public String getArticles() throws SQLException {
