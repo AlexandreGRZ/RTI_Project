@@ -12,10 +12,9 @@ public class serveurPayementAppSecure
         config.load(ServerPaymentApp.class.getClassLoader().getResourceAsStream("config.properties"));
 
         int port = Integer.parseInt(config.getProperty("server.port"));
-        int poolSize = Integer.parseInt(config.getProperty("server.nbrThreads"));
 
         // Start thread server
-        threadServerSecu threadServer = new threadServerSecu(port, new VESPAPS(), poolSize);// Protocole needs to be added
+        threadServerSecu threadServer = new threadServerSecu(port, new VESPAPS());// Protocole needs to be added
         threadServer.start();
 
         // Waiting system
