@@ -30,9 +30,9 @@ public class ServerTLSApp {
 
         httpsServer.setHttpsConfigurator(new HttpsConfigurator(sslContext));
 
-        httpsServer.createContext("/", new HandlerHtml(true));
-        httpsServer.createContext("/index", new HandlerHtml(true));
-        httpsServer.createContext("/index.html", new HandlerHtml(true));
+        httpsServer.createContext("/", new HandlerHtml());
+        httpsServer.createContext("/index", new HandlerHtml());
+        httpsServer.createContext("/index.html", new HandlerHtml());
 
         httpsServer.createContext("/getArticle", new API());
         httpsServer.createContext("/update", new API());
