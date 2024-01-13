@@ -68,15 +68,15 @@ public class PayementController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try {
-            socket = new Socket("127.0.0.1", 8080);
-            System.out.println();
-            Output = new ObjectOutputStream(socket.getOutputStream());
-            Input = new ObjectInputStream(socket.getInputStream());
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            socket = new Socket("127.0.0.1", 8080);
+//            System.out.println();
+//            Output = new ObjectOutputStream(socket.getOutputStream());
+//            Input = new ObjectInputStream(socket.getInputStream());
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 

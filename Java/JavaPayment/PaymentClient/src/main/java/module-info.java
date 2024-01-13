@@ -5,4 +5,5 @@ module com.hepl.paymentclient {
 
     opens com.hepl.paymentclient to javafx.fxml;
     exports com.hepl.paymentclient;
+    exports com.hepl.paymentclient.Modele;
 }
