@@ -9,8 +9,13 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 
 public class HandlerHtml implements HttpHandler {
+    private boolean isSecure;
 
     private final String RESOURCES_PATH = System.getProperty("user.dir") + "\\ServerHttp\\src\\main\\resources";
+
+    public HandlerHtml(boolean isSecure) {
+        this.isSecure = isSecure;
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -38,7 +43,11 @@ public class HandlerHtml implements HttpHandler {
             os.close();
             System.out.println("Envoi page css");
         } else if (uriPath.endsWith(".js")) {
-            File file = new File(RESOURCES_PATH + "\\js\\app.js");
+            File file;
+            if (isSecure)
+                file = new File(RESOURCES_PATH + "\\js\\apps.js");
+            else
+                file = new File(RESOURCES_PATH + "\\js\\app.js");
             exchange.sendResponseHeaders(200, file.length());
             exchange.getResponseHeaders().set("Content-Type", "text/jss");
             OutputStream os = exchange.getResponseBody();
