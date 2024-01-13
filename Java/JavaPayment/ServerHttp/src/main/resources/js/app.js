@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function getArticle() {
    var xhr = new XMLHttpRequest();
-   var url = "http://localhost:8080/getArticle";
+   var url = "//localhost:8080/getArticle";
    xhr.onreadystatechange = function () {
       if (xhr.readyState === 4 && xhr.status === 200) {
          var reponseData = JSON.parse(xhr.responseText);
@@ -56,7 +56,7 @@ function tableUpdate(articles) {
          document.getElementById("nomArticle").innerHTML = currentArticle.name;
          document.getElementById("prixInput").value = currentArticle.price;
          document.getElementById("stockInput").value = currentArticle.quantity;
-         document.getElementById("imageArticle").src = currentArticle.imageUrl;
+         document.getElementById("imageArticle").src = "images/"+currentArticle.imageUrl;
       };
    });
 }
@@ -81,7 +81,7 @@ function updateCurrentArticleFromForm() {
 
 function updateDB() {
    var xhr = new XMLHttpRequest();
-   var url = "http://localhost:8080/update?";
+   var url = "//localhost:8080/update?";
    updateCurrentArticleFromForm();
    var data =
       "id=" +
