@@ -20,6 +20,7 @@ public class API implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        System.out.println("api");
         if (exchange.getRequestMethod().equals("GET") && exchange.getRequestURI().getPath().equals("/getArticle"))
             getArticleEndpoints(exchange);
         else if (exchange.getRequestMethod().equals("POST") && exchange.getRequestURI().getPath().equals("/update"))
