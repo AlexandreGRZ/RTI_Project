@@ -12,12 +12,12 @@ public class getFactureSecureRequest implements Request {
     SecretKey CleSession;
     private byte[] signature;
 
-    public getFactureSecureRequest(int idClient, SecretKey cleSession) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException, SignatureException, ClassNotFoundException {
+    public getFactureSecureRequest(int idClient, SecretKey cleSession, PrivateKey clepriverClient) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidKeyException, IOException, SignatureException, ClassNotFoundException {
         this.idClient = idClient;
         this.CleSession = cleSession;
 
         Signature s = Signature.getInstance("SHA1withRSA","BC");
-        PrivateKey clePriveClient = RecupereClePriveeClient();
+        PrivateKey clePriveClient = clepriverClient;
         s.initSign(clePriveClient);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -59,10 +59,4 @@ public class getFactureSecureRequest implements Request {
         this.signature = signature;
     }
 
-    public static PrivateKey RecupereClePriveeClient() throws IOException, ClassNotFoundException {
-        // Désérialisation de la clé privée du serveur
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("cleServeur/clePriveeClients.ser"));
-        PrivateKey cle = (PrivateKey) ois.readObject(); ois.close();
-        return cle;
-    }
 }

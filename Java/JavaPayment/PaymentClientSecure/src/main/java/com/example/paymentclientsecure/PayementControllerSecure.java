@@ -30,6 +30,8 @@ import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -89,6 +91,10 @@ public class PayementControllerSecure implements Initializable {
 
         } catch (NoSuchAlgorithmException | NoSuchProviderException | ClassNotFoundException | IOException e) {
             throw new RuntimeException(e);
+        } catch (CertificateException e) {
+            throw new RuntimeException(e);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException(e);
         }
 
         try {
@@ -135,11 +141,11 @@ public class PayementControllerSecure implements Initializable {
         ChangeLogOutInterface();
     }
     
-    public void onActionRechercherBtn(ActionEvent actionEvent) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+    public void onActionRechercherBtn(ActionEvent actionEvent) throws IOException, ClassNotFoundException, NoSuchAlgorithmException, SignatureException, NoSuchProviderException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, UnrecoverableKeyException, CertificateException, KeyStoreException {
 
         int idClientToSearch = Integer.parseInt(TxtFieldIdClient.getText());
 
-        getFactureSecureRequest getFacturesRequest = new getFactureSecureRequest(idClientToSearch, cleSession);
+        getFactureSecureRequest getFacturesRequest = new getFactureSecureRequest(idClientToSearch, cleSession, RecupereClePrivateClient());
 
         Output.writeObject(getFacturesRequest);
 
@@ -249,11 +255,22 @@ public class PayementControllerSecure implements Initializable {
         this.sharedDataModel = sharedDataModel;
     }
 
-    public static PublicKey RecupereClePubliqueServeur() throws IOException, ClassNotFoundException {
+    public static PublicKey RecupereClePubliqueServeur() throws IOException, ClassNotFoundException, KeyStoreException, CertificateException, NoSuchAlgorithmException {
         // Désérialisation de la clé publique
-        System.out.println(System.getProperty("user.dir"));
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("cleServeur/clePubliqueServeur.ser"));
-        PublicKey cle = (PublicKey) ois.readObject(); ois.close();
+        KeyStore ks = KeyStore.getInstance("JKS");
+
+        ks.load(new FileInputStream("cleServeur/KeystoreClient.jks"),"Papyrusse007".toCharArray());
+        X509Certificate certif = (X509Certificate)ks.getCertificate("Serveur");
+        PublicKey cle = certif.getPublicKey();
+        return cle;
+    }
+
+    public static PrivateKey RecupereClePrivateClient() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+    // Récupération de la clé privée de Jean-Marc dans le keystore de Jean-Marc
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(new FileInputStream("cleServeur/KeystoreClient.jks"),"Papyrusse007".toCharArray());
+
+        PrivateKey cle = (PrivateKey) ks.getKey("Client","Papyrusse007".toCharArray());
         return cle;
     }
 }

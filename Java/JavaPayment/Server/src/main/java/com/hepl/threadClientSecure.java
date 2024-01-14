@@ -15,6 +15,7 @@ import javax.crypto.SecretKey;
 import java.io.*;
 import java.net.Socket;
 import java.security.*;
+import java.security.cert.CertificateException;
 import java.sql.SQLException;
 
 public class threadClientSecure extends Thread{
@@ -24,12 +25,11 @@ public class threadClientSecure extends Thread{
     ObjectOutputStream oos;
     ObjectInputStream ois;
     ProtocolSecure protocol;
-
     SecretKey ClientKey;
 
-    threadClientSecure(WaitingQ queue, ProtocolSecure protocol) throws IOException, SQLException {
-        this.queue = queue;
+    threadClientSecure(ProtocolSecure protocol, Socket cSocket) throws IOException, SQLException {
         this.protocol = protocol;
+        this.socket = cSocket;
     }
 
     @Override
@@ -45,26 +45,15 @@ public class threadClientSecure extends Thread{
             return;
         }
         while (true) {
-            // Waiting for new client
-            try {
-                System.out.println("[" + getName() + "]Waiting for a new client connection...");
-                socket = queue.getConnection();
-            } catch (InterruptedException e) {
-                System.out.println("[" + getName() + "]Thread interruption.");
-                return;
-            }
-            System.out.println("[" + getName() + "]Handling new client.");
-
             try {
                 System.out.println("input");
                 ois = new ObjectInputStream(socket.getInputStream());
                 System.out.println("output");
                 oos = new ObjectOutputStream(socket.getOutputStream());
-                PrivateKey clePriveeServeur = RecupereClePriveeServeur();
 
                 Request request = (Request) ois.readObject();
                 System.out.println("Request received.");
-                Response response = protocol.handleRequest(request, connection, clePriveeServeur, ClientKey);
+                Response response = protocol.handleRequest(request, connection, ClientKey);
                 requestSecureResponse response2 = (requestSecureResponse) response;
                 ClientKey = response2.getCleSession();
                 // Interaction with the client
@@ -72,7 +61,7 @@ public class threadClientSecure extends Thread{
                     System.out.println("Waiting for request...");
                     request = (Request) ois.readObject();
                     System.out.println("Request received.");
-                    response = protocol.handleRequest(request, connection, clePriveeServeur, ClientKey);
+                    response = protocol.handleRequest(request, connection, ClientKey);
                     System.out.println("Sending response...");
                     oos.writeObject(response);
                 }
@@ -90,21 +79,20 @@ public class threadClientSecure extends Thread{
                 throw new RuntimeException(e);
             } catch (SignatureException e) {
                 throw new RuntimeException(e);
+            } catch (CertificateException e) {
+                throw new RuntimeException(e);
+            } catch (KeyStoreException e) {
+                throw new RuntimeException(e);
+            } catch (UnrecoverableKeyException e) {
+                throw new RuntimeException(e);
             } finally {
                 try {
                     socket.close();
+                    break;
                 } catch (IOException e) {
                     System.out.println("[" + getName() + "IOException while trying to close socket : " + e.getMessage());
                 }
             }
         }
-    }
-
-
-    public static PrivateKey RecupereClePriveeServeur() throws IOException, ClassNotFoundException {
-        // Désérialisation de la clé privée du serveur
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cleServeur/clePriveeServeur.ser"));
-        PrivateKey cle = (PrivateKey) ois.readObject(); ois.close();
-        return cle;
     }
 }
