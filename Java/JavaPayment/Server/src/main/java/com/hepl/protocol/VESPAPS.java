@@ -14,6 +14,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.security.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.sql.SQLException;
 
 import org.bouncycastle.jce.provider.*;
@@ -21,9 +23,9 @@ import org.bouncycastle.jce.provider.*;
 public class VESPAPS implements ProtocolSecure {
 
     @Override
-    public synchronized Response handleRequest(Request request, DbConnection connection,PrivateKey clePriveeServeur, SecretKey ClientCle) throws EndConnectionException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, NoSuchProviderException, InvalidKeyException, IOException, SQLException, SignatureException, ClassNotFoundException {
+    public synchronized Response handleRequest(Request request, DbConnection connection,SecretKey ClientCle) throws EndConnectionException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, NoSuchProviderException, InvalidKeyException, IOException, SQLException, SignatureException, ClassNotFoundException, CertificateException, KeyStoreException, UnrecoverableKeyException {
         if(request instanceof requestSecure)
-            return handleRequestSecure((requestSecure) request, connection, clePriveeServeur, ClientCle);
+            return handleRequestSecure((requestSecure) request, connection, RecupereClePrivateServeur(), ClientCle);
         if (request instanceof LoginRequestSecure)
             return handleLoginRequest((LoginRequestSecure) request, connection);
         if (request instanceof getFactureSecureRequest)
@@ -74,12 +76,12 @@ public class VESPAPS implements ProtocolSecure {
     }
 
 
-    private synchronized getFacturesSecureResponse handleGetFacturesRequest(getFactureSecureRequest request, DbConnection connection, SecretKey cleSession) throws NoSuchAlgorithmException, IOException, SignatureException, NoSuchProviderException, InvalidKeyException, ClassNotFoundException, SQLException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+    private synchronized getFacturesSecureResponse handleGetFacturesRequest(getFactureSecureRequest request, DbConnection connection, SecretKey cleSession) throws NoSuchAlgorithmException, IOException, SignatureException, NoSuchProviderException, InvalidKeyException, ClassNotFoundException, SQLException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, CertificateException, KeyStoreException {
         System.out.println("Get facture request");
 
         int idClient = request.getIdClient();
 
-        PublicKey cleClient = RecupereClePublicClient();
+        PublicKey cleClient = RecupereClePubliqueClient();
 
         if(request.VerifySignature(cleClient)){
             System.out.println("Signature validée !");
@@ -150,10 +152,23 @@ public class VESPAPS implements ProtocolSecure {
         throw new EndConnectionException(null);
     }
 
-    public static PublicKey RecupereClePublicClient() throws IOException, ClassNotFoundException {
-        // Désérialisation de la clé privée du serveur
-        ObjectInputStream ois = new ObjectInputStream(new FileInputStream("../cleServeur/clePubliqueClients.ser"));
-        PublicKey cle = (PublicKey) ois.readObject(); ois.close();
+
+    public static PublicKey RecupereClePubliqueClient() throws IOException, KeyStoreException, CertificateException, NoSuchAlgorithmException {
+// Récupération de la clé publique de Jean-Marc dans le keystore de Christophe
+        KeyStore ks = KeyStore.getInstance("JKS");
+
+        ks.load(new FileInputStream("../cleServeur/KeystoreServeur.jks"),"Papyrusse007".toCharArray());
+        X509Certificate certif = (X509Certificate)ks.getCertificate("Client");
+        PublicKey cle = certif.getPublicKey();
+        return cle;
+    }
+
+    public static PrivateKey RecupereClePrivateServeur() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+        // Récupération de la clé privée de Jean-Marc dans le keystore de Jean-Marc
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(new FileInputStream("../cleServeur/KeystoreServeur.jks"),"Papyrusse007".toCharArray());
+
+        PrivateKey cle = (PrivateKey) ks.getKey("Serveur","Papyrusse007".toCharArray());
         return cle;
     }
 
